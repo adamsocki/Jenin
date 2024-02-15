@@ -41,6 +41,15 @@ void AJeninMarqueeHUD::DrawHUD()
 			}
 		}
 	}
+	else
+	{
+
+		
+		for (int i = 0; i < SelectedActors.Num(); i++)
+		{
+			//SelectedActors[i].selec
+		}
+	}
 }
 
 	
@@ -49,6 +58,8 @@ void AJeninMarqueeHUD::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	ReceiveDrawHUD(StartMousePosition.X - CurrentMousePosition.X, StartMousePosition.Y - CurrentMousePosition.Y);
+
+	SelectedActors.Empty();
 
 	
 }
