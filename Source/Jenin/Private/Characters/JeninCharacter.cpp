@@ -20,16 +20,21 @@ AJeninCharacter::AJeninCharacter()
 	this->Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	this->Camera->SetupAttachment(this->CameraBoom);
 
-	CanSpawn = true;
+	IsSpawning = false;
 
 	
 	FireRate = 0.25f;
 	IsFiringWeapon = false;
+
+	static ConstructorHelpers::FClassFinder<AActor> BPFinder(TEXT("Blueprint'/Game/App/Actors/BP_JeninResidentActor.BP_JeninResidentActor_C'"));
+	if (BPFinder.Class != nullptr)
+	{
+		ResidentBPClass = BPFinder.Class; 
+	}
+
 }
 
-void AJeninCharacter::StopFire()
-{
-}
+
 
 void AJeninCharacter::BeginPlay()
 {
@@ -122,10 +127,17 @@ void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 	//AJeninResidentActor* NewActor = GetWorld()->SpawnActor<AJeninResidentActor>(AJeninResidentActor::StaticClass()); // Default spawn parameters
 
 	//FTransform SpawnTransform = {};
-	SpawnResident();
-	CanSpawn = false;
-	UWorld* World = GetWorld();
-	World->GetTimerManager().SetTimer(FiringTimer, this, &AJeninCharacter::StopFire, FireRate, false);
+
+	FireRate = 1.0f;
+	if (!IsSpawning)
+	{
+		IsSpawning = true;
+		UWorld* World = GetWorld();
+		World->GetTimerManager().SetTimer(FiringTimer, this, &AJeninCharacter::StopSpawn, FireRate, false);
+		SpawnResident();
+	}
+	//CanSpawn = false;
+	
             
 	//FVector SpawnLocation = {};
 	//SpawnLocation = this->GetActorLocation();
@@ -135,9 +147,14 @@ void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 	//CanSpawn = false;
 }
 
+void AJeninCharacter::StopSpawn()
+{
+	IsSpawning = false;
+}
+
 void AJeninCharacter::SpawnCompleted(const FInputActionValue& Value)
 {
-	CanSpawn = true; 
+	//CanSpawn = true; 
 }
 
 void AJeninCharacter::SpawnResident_Implementation()
@@ -149,8 +166,14 @@ void AJeninCharacter::SpawnResident_Implementation()
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;
 
-	AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
+	//
+	//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
 
+	if (ResidentBPClass)
+	{
+		GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, spawnLocation, spawnRotation);
+	}
+	
 }
 
 
@@ -170,7 +193,7 @@ void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Completed, this, &AJeninCharacter::MouseLeftClickCompleted);
 		
 		EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Triggered, this, &AJeninCharacter::SpawnTriggered);
-		EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Completed, this, &AJeninCharacter::SpawnCompleted);
+		//EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Completed, this, &AJeninCharacter::SpawnCompleted);
 		
 	}
 }

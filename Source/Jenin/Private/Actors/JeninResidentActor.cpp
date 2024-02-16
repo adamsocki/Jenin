@@ -24,6 +24,7 @@ AJeninResidentActor::AJeninResidentActor()
 		// Optional: Handle the case where the mesh was not found
 	}
 	bReplicates = true;
+	IsSelected = false;
 }
 
 // Called when the game starts or when spawned

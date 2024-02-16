@@ -60,17 +60,22 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SpawnResident();
 
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StopSpawn();
+	
 	int32 Character_MapID;
 
-	bool CanSpawn;
+	bool IsSpawning;
 
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay")
 	float FireRate;
 	bool IsFiringWeapon = false;
 
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-	void StopFire();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	TSubclassOf<AActor> ResidentBPClass;
+
 	
+
 	/** A timer handle used for providing the fire rate delay in-between spawns.*/
 	FTimerHandle FiringTimer;
 	

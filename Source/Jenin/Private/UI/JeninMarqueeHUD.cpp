@@ -43,8 +43,6 @@ void AJeninMarqueeHUD::DrawHUD()
 	}
 	else
 	{
-
-		
 		for (int i = 0; i < SelectedActors.Num(); i++)
 		{
 			//SelectedActors[i].selec
