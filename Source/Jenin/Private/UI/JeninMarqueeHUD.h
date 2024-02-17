@@ -32,6 +32,8 @@ public:
 	void MarqueeReleased();
 
 	TArray<AJeninResidentActor*>  SelectedActors;
+	TArray<AJeninResidentActor*>  ActorsInRectangle;
+
 
 	
 };

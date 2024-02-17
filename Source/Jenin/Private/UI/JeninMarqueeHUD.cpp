@@ -2,6 +2,8 @@
 
 
 #include "JeninMarqueeHUD.h"
+
+#include "Components/DecalComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -11,11 +13,13 @@ AJeninMarqueeHUD::AJeninMarqueeHUD()
 	StartMousePosition = {};
 	CurrentMousePosition = {};
 	IsDrawing = false;
+
+	SelectedActors = {};
+	ActorsInRectangle = {};
 }
 
 void AJeninMarqueeHUD::DrawHUD()
 {
-	
 	if (IsDrawing)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("IsDrawing = TRUE"));
@@ -28,18 +32,53 @@ void AJeninMarqueeHUD::DrawHUD()
 
 		DrawRect(c,StartMousePosition.X, StartMousePosition.Y, (CurrentMousePosition.X - StartMousePosition.X), (CurrentMousePosition.Y - StartMousePosition.Y));
 
-
-		bool bSuccessfullySelected = GetActorsInSelectionRectangle(StartMousePosition, CurrentMousePosition, SelectedActors, false, false);
+		const bool bSuccessfullySelected = GetActorsInSelectionRectangle(StartMousePosition, CurrentMousePosition, ActorsInRectangle, false, false);
 
 		if (bSuccessfullySelected)
 		{
+			for (int i = 0; i < ActorsInRectangle.Num(); i++)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Selected Actor: %s"), *ActorsInRectangle[i]->GetName());
+
+				
+				AJeninResidentActor * Resident = ActorsInRectangle[i];
+				UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
+
+				SelectedActors.Add(ActorsInRectangle[i]);
+				
+				if (DecalComponent)
+				{
+					DecalComponent->SetVisibility(true); 
+				}
+			}
+
+			
+
 			for (int i = 0; i < SelectedActors.Num(); i++)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Selected Actor: %s"), *SelectedActors[i]->GetName());
-				
-				// ... Do something with the selected actors (e.g., highlight, apply logic)
+				if(ActorsInRectangle.Find(SelectedActors[i]) == INDEX_NONE)
+				{
+					AJeninResidentActor * Resident = SelectedActors[i];
+					UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
+					if (DecalComponent)
+					{
+						DecalComponent->SetVisibility(false); 
+					}
+				}
+					// DESELECT ACTOR
+
+					// REMOVE FROM SELECTED ACTORS ARRAY
+				//	SelectedActors.Remove(SelectedActors[i]);
+
+				//	
+				//}
+
+			
 			}
+			
 		}
+		
+		
 	}
 	else
 	{
@@ -55,9 +94,10 @@ void AJeninMarqueeHUD::DrawHUD()
 void AJeninMarqueeHUD::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	ReceiveDrawHUD(StartMousePosition.X - CurrentMousePosition.X, StartMousePosition.Y - CurrentMousePosition.Y);
+	//ReceiveDrawHUD(StartMousePosition.X - CurrentMousePosition.X, StartMousePosition.Y - CurrentMousePosition.Y);
 
-	SelectedActors.Empty();
+	ActorsInRectangle.Empty();
+	//SelectedActors.Empty();
 
 	
 }
