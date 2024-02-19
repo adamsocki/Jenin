@@ -3,6 +3,10 @@
 
 #include "JeninMarqueeHUD.h"
 
+#include "Characters/JeninPlayerController.h"
+#include "GameFramework/PlayerController.h"
+
+
 #include "Components/DecalComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,6 +20,13 @@ AJeninMarqueeHUD::AJeninMarqueeHUD()
 
 	SelectedActors = {};
 	ActorsInRectangle = {};
+}
+
+void AJeninMarqueeHUD::BeginPlay()
+{
+	Super::BeginPlay();
+
+	PlayerController = GetOwningPlayerController();
 }
 
 void AJeninMarqueeHUD::DrawHUD()
@@ -113,10 +124,32 @@ void AJeninMarqueeHUD::MarqueeHeld(const FVector2D currentMousePosition)
 	CurrentMousePosition = currentMousePosition;
 }
 
-void AJeninMarqueeHUD::MarqueeReleased()
+void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 {
 	IsDrawing = false;
-	StartMousePosition = {};
+	if (StartMousePosition == releasedMousePosition)
+	{
+		
+		if (const AJeninPlayerController* JeninPC = Cast<AJeninPlayerController>(PlayerController))
+		{
+			FHitResult HitResult;
+			JeninPC->GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1, false, HitResult); // Adjust channel as needed 
+
+			if (HitResult.bBlockingHit)
+			{
+				AActor* HitActor = HitResult.GetActor();
+
+				// Your custom selection logic:
+				if (HitActor->ActorHasTag(FName("Selectable"))) 
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("You selected something!"));
+					//CurrentlySelectedActor = HitActor; 
+				}
+			}
+		}
+		
+		UE_LOG(LogTemp, Warning, TEXT("MarqueeReleased"));
+	}
 }
 
 

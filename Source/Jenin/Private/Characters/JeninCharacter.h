@@ -29,10 +29,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> MoveAction = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> MouseLeftClickAction = nullptr;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> RotateAction = nullptr;
 
@@ -42,6 +39,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> SpawnAction = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> MouseLeftClickAction = nullptr;
+
+	
 	void MoveTriggered(const FInputActionValue& Value);	
 	void RotateTriggered(const FInputActionValue& Value);
 	void ZoomTriggered(const FInputActionValue& Value);
@@ -52,7 +53,7 @@ public:
 
 	void SpawnTriggered(const FInputActionValue& Value);
 	void SpawnCompleted(const FInputActionValue& Value);
-
+	
 	
 	UFUNCTION(Server, Unreliable)
 	void Server_MoveForward(float ForwardMovementFloat);
@@ -74,7 +75,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
 	TSubclassOf<AActor> ResidentBPClass;
 
-	
+	float DragTolerance = 10.0f;
+	bool IsMarqueeSelecting;
 
 	/** A timer handle used for providing the fire rate delay in-between spawns.*/
 	FTimerHandle FiringTimer;

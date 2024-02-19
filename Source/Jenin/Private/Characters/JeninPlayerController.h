@@ -20,15 +20,15 @@ class JENIN_API AJeninPlayerController : public APlayerController
 
 	AJeninPlayerController();
 
-
 public:
 	virtual void Tick(float DeltaSeconds) override;
-
 	
 	bool IsMouseTriggered;
 	bool IsMouseHeld;
+	bool IsMouseReleased;
+	
 	
 protected:
 	virtual void BeginPlay() override;
-
+	
 };

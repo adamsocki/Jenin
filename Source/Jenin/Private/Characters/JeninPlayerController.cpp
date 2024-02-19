@@ -3,7 +3,11 @@
 
 #include "JeninPlayerController.h"
 
+
+
 #include "InteractiveToolManager.h"
+#include "JeninCharacter.h"
+#include "Core/JeninPlayerState.h"
 #include "UI/JeninMarqueeHUD.h"
 
 
@@ -18,42 +22,52 @@ AJeninPlayerController::AJeninPlayerController()
 void AJeninPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (GetHUD())
+
+	AJeninPlayerState* CurrentPlayerState = GetPlayerState<AJeninPlayerState>();
+	AJeninMarqueeHUD* MarqueeHUD = GetHUD<AJeninMarqueeHUD>();
+	//GetPlayerState
+
+	
+	if (CurrentPlayerState && MarqueeHUD)
 	{
-		if (IsMouseTriggered)
+		if (CurrentPlayerState->InPlay)
 		{
-			AJeninMarqueeHUD* MarqueeHUD = GetHUD<AJeninMarqueeHUD>();
-			FVector2D MousePosition = {};
-			GetMousePosition(MousePosition.X, MousePosition.Y);
-			MarqueeHUD->MarqueePressed(MousePosition);
+			if (IsMouseTriggered)
+			{
+				FVector2D MousePosition = {};
+				GetMousePosition(MousePosition.X, MousePosition.Y);
+				MarqueeHUD->MarqueePressed(MousePosition);
 		
-			IsMouseTriggered = false;
-			IsMouseHeld = true;
-		}
+				IsMouseTriggered = false;
+				IsMouseHeld = true;
+			}
 
-		if(IsMouseHeld)
-		{
-		
-			AJeninMarqueeHUD* MarqueeHUD = GetHUD<AJeninMarqueeHUD>();
-			FVector2D MousePosition = {};
-			GetMousePosition(MousePosition.X, MousePosition.Y);
-			MarqueeHUD->MarqueeHeld(MousePosition);
-		
-		}
-	
-	
-		if (!IsMouseHeld)
-		{
-			AJeninMarqueeHUD* MarqueeHUD = GetHUD<AJeninMarqueeHUD>();
-			MarqueeHUD->IsDrawing = false;
-			//UE_LOG(LogTemp, Warning, TEXT("IsMousePressed = FALSE"));
+			if(IsMouseHeld)
+			{
+				FVector2D MousePosition = {};
+				GetMousePosition(MousePosition.X, MousePosition.Y);
+				MarqueeHUD->MarqueeHeld(MousePosition);
+			}
+			if (!IsMouseHeld)
+			{
+				MarqueeHUD->IsDrawing = false;
+				//UE_LOG(LogTemp, Warning, TEXT("IsMousePressed = FALSE"));
+			}
 
+			if (IsMouseReleased)
+			{
+				IsMouseTriggered = false;
+				IsMouseHeld = false;
+				IsMouseReleased = false;
+				FVector2D MousePosition = {};
+				GetMousePosition(MousePosition.X, MousePosition.Y);
+				MarqueeHUD->MarqueeReleased(MousePosition);
+
+
+			}
 		}
+		
 	}
-	
-
-	
-
 	
 }
 

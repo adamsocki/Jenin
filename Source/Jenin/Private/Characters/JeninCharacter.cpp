@@ -9,6 +9,7 @@
 #include "Actors/JeninResidentActor.h"
 #include "Core/JeninGameState.h"
 #include "GameFramework/GameStateBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AJeninCharacter::AJeninCharacter()
 {
@@ -22,6 +23,7 @@ AJeninCharacter::AJeninCharacter()
 
 	IsSpawning = false;
 
+	IsMarqueeSelecting = false;
 	
 	FireRate = 0.25f;
 	IsFiringWeapon = false;
@@ -59,16 +61,14 @@ void AJeninCharacter::BeginPlay()
 void AJeninCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	
 }
 
-	
-
-	
 	// @TODO: Fix movement so that it starts off slower and speeds up
 	// @TODO: Fix movement so that it Ends faster then speeds down
 	// @TODO: Fix movement so that isn't as fast if both forward and lateral are pressed simultaneously 
 	// @TODO: Set server vs listen-server movement 
-
 
 void AJeninCharacter::RotateTriggered(const FInputActionValue& Value)
 {
@@ -108,6 +108,9 @@ void AJeninCharacter::MouseLeftClickOngoing(const FInputActionValue& Value)
 	{
 		PlayerController->IsMouseTriggered = false;
 		PlayerController->IsMouseHeld = true;
+
+
+		
 	}
 }
 
@@ -115,10 +118,12 @@ void AJeninCharacter::MouseLeftClickCompleted(const FInputActionValue& Value)
 {
 	if (AJeninPlayerController* PlayerController = Cast<AJeninPlayerController>(Controller))
 	{
-		
-		PlayerController->IsMouseTriggered = false;
-		PlayerController->IsMouseHeld = false;
+		//PlayerController->IsMouseTriggered = false;
+		//PlayerController->IsMouseHeld = false;
+
+		PlayerController->IsMouseReleased = true;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Released"));
 }
 
 void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
@@ -137,7 +142,6 @@ void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 		SpawnResident();
 	}
 	//CanSpawn = false;
-	
             
 	//FVector SpawnLocation = {};
 	//SpawnLocation = this->GetActorLocation();
@@ -165,8 +169,7 @@ void AJeninCharacter::SpawnResident_Implementation()
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;
-
-	//
+	
 	//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
 
 	if (ResidentBPClass)
@@ -194,7 +197,8 @@ void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		
 		EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Triggered, this, &AJeninCharacter::SpawnTriggered);
 		//EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Completed, this, &AJeninCharacter::SpawnCompleted);
-		
+
+		//EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MouseLeftClickTriggered)
 	}
 }
 
@@ -218,3 +222,5 @@ void AJeninCharacter::Server_MoveForward_Implementation(float ForwardMovementFlo
 {
 	UE_LOG(LogTemp, Warning, TEXT("Hello"));
 }
+
+

@@ -17,19 +17,24 @@ class JENIN_API AJeninMarqueeHUD : public AHUD
 
 	AJeninMarqueeHUD();
 
+	
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	FVector2D StartMousePosition;
 	FVector2D CurrentMousePosition;
 
 	bool IsDrawing;
 
+	APlayerController* PlayerController;
 
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void DrawHUD() override;
 	
 	void MarqueePressed(FVector2D startMousePosition);
 	void MarqueeHeld(FVector2D currentMousePosition);
-	void MarqueeReleased();
+	void MarqueeReleased(const FVector2D releasedMousePosition);
 
 	TArray<AJeninResidentActor*>  SelectedActors;
 	TArray<AJeninResidentActor*>  ActorsInRectangle;
