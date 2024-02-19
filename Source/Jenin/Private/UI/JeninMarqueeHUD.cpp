@@ -51,16 +51,20 @@ void AJeninMarqueeHUD::DrawHUD()
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Selected Actor: %s"), *ActorsInRectangle[i]->GetName());
 
-				
-				AJeninResidentActor * Resident = ActorsInRectangle[i];
-				UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
-
-				SelectedActors.Add(ActorsInRectangle[i]);
-				
-				if (DecalComponent)
+				if (ActorsInRectangle[i]->ActorHasTag(FName("Selectable")))
 				{
-					DecalComponent->SetVisibility(true); 
+					AActor * Resident = ActorsInRectangle[i];
+					UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
+
+					SelectedActors.Add(ActorsInRectangle[i]);
+				
+					if (DecalComponent)
+					{
+						DecalComponent->SetVisibility(true); 
+					}
 				}
+				
+				
 			}
 
 			
@@ -69,7 +73,8 @@ void AJeninMarqueeHUD::DrawHUD()
 			{
 				if(ActorsInRectangle.Find(SelectedActors[i]) == INDEX_NONE)
 				{
-					AJeninResidentActor * Resident = SelectedActors[i];
+					
+					AActor * Resident = SelectedActors[i];
 					UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
 					if (DecalComponent)
 					{

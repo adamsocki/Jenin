@@ -36,8 +36,8 @@ public:
 	void MarqueeHeld(FVector2D currentMousePosition);
 	void MarqueeReleased(const FVector2D releasedMousePosition);
 
-	TArray<AJeninResidentActor*>  SelectedActors;
-	TArray<AJeninResidentActor*>  ActorsInRectangle;
+	TArray<AActor*>  SelectedActors;
+	TArray<AActor*>  ActorsInRectangle;
 
 
 	
