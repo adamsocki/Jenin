@@ -8,6 +8,7 @@
 #include "JeninPlayerController.h"
 #include "Actors/JeninResidentActor.h"
 #include "Core/JeninGameState.h"
+#include "GameFramework/GameSession.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -42,18 +43,43 @@ void AJeninCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AGameStateBase* GameState = GetWorld()->GetGameState();
-	//
+	//GetPlayerState()
 
+	JeninGameState = Cast<AJeninGameState>(GetWorld()->GetGameState());
+	JeninPlayerState = Cast<AJeninPlayerState>(GetPlayerState());
+
+	
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		
-
-		
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(InputContext,0);
 		}
+	}
+
+	
+	AActor* owner = GetOwner();
+	
+	if(owner)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *owner->GetName());
+		
+		//Create Default Unit & Building Setup
+		FVector spawnLocation = owner->GetActorLocation() + ( owner->GetActorRotation().Vector()  * 100.0f ) + (owner->GetActorUpVector() * 50.0f);
+		FRotator spawnRotation = owner->GetActorRotation();
+		
+		FActorSpawnParameters spawnParameters;
+		spawnParameters.Instigator = GetInstigator();
+		spawnParameters.Owner = this;
+		
+		//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
+
+		
+		if (ResidentBPClass && JeninGameState->InDev)
+		{
+			SpawnResident();
+		}
+		
 	}
 }
 
@@ -61,8 +87,6 @@ void AJeninCharacter::BeginPlay()
 void AJeninCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	
 }
 
 	// @TODO: Fix movement so that it starts off slower and speeds up
@@ -89,7 +113,6 @@ void AJeninCharacter::ZoomTriggered(const FInputActionValue& Value)
 		NewArmLength = FMath::Clamp(NewArmLength, 100.0f, 10000.0f); 
 
 		CameraBoom->TargetArmLength = NewArmLength;
-		
 	}
 }
 
@@ -174,8 +197,16 @@ void AJeninCharacter::SpawnResident_Implementation()
 
 	if (ResidentBPClass)
 	{
-		GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, spawnLocation, spawnRotation);
+		AJeninResidentActor* SpawnedActor = GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, spawnLocation, spawnRotation);
+		//JeninPlayerState->Units.Add(SpawnedActor);
+
+		if (SpawnedActor) 
+		{
+			SpawnedActor->SetOwner(this); 
+		}
 	}
+
+	
 	
 }
 

@@ -3,10 +3,23 @@
 
 #include "JeninPlayerState.h"
 
+#include "Actors/JeninResidentActor.h"
+
 AJeninPlayerState::AJeninPlayerState()
 {
-
-
+	Units = {};
+	Buildings = {};
 	InPlay = true;
+	
+}
+
+void AJeninPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
+	
+	
+	
 	
 }

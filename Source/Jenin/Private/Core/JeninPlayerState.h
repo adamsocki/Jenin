@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actors/JeninResidentActor.h"
 #include "GameFramework/PlayerState.h"
 #include "JeninPlayerState.generated.h"
 
@@ -17,6 +18,14 @@ class JENIN_API AJeninPlayerState : public APlayerState
 
 	AJeninPlayerState();
 
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	bool InPlay;
+
+	TArray<AActor*> Buildings;
+	TArray<AJeninResidentActor*> Units;
+
+	
 };

@@ -25,5 +25,9 @@ class JENIN_API AJeninGameState : public AGameStateBase
 	int32 GenerateUniqueCharacterID();
 	int32 CharacterID_Values;
 
+public:
+	UPROPERTY(EditAnywhere)
+	bool InDev; 
+
 	
 };

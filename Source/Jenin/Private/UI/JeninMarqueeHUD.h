@@ -39,6 +39,9 @@ public:
 	TArray<AActor*>  SelectedActors;
 	TArray<AActor*>  ActorsInRectangle;
 
+// DEBUG CODE //
+	bool DisAllowOnlySelectionOfOwnerUnits;
+
 
 	
 };

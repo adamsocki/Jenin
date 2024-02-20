@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystemInterface.h"
+#include "EnhancedInputSubsystems.h"
 
 
 #include "JeninPlayerController.generated.h"
@@ -26,9 +27,10 @@ public:
 	bool IsMouseTriggered;
 	bool IsMouseHeld;
 	bool IsMouseReleased;
-	
-	
+
+
+
 protected:
 	virtual void BeginPlay() override;
-	
+
 };

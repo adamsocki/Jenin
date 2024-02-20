@@ -4,8 +4,7 @@
 #include "JeninPlayerController.h"
 
 
-
-#include "InteractiveToolManager.h"
+#include "EnhancedInputComponent.h"
 #include "JeninCharacter.h"
 #include "Core/JeninPlayerState.h"
 #include "UI/JeninMarqueeHUD.h"
@@ -15,6 +14,7 @@ AJeninPlayerController::AJeninPlayerController()
 {
 	IsMouseTriggered = false;
 	IsMouseHeld = false;
+
 	
 }
 
@@ -25,8 +25,6 @@ void AJeninPlayerController::Tick(float DeltaTime)
 
 	AJeninPlayerState* CurrentPlayerState = GetPlayerState<AJeninPlayerState>();
 	AJeninMarqueeHUD* MarqueeHUD = GetHUD<AJeninMarqueeHUD>();
-	//GetPlayerState
-
 	
 	if (CurrentPlayerState && MarqueeHUD)
 	{
@@ -62,14 +60,14 @@ void AJeninPlayerController::Tick(float DeltaTime)
 				FVector2D MousePosition = {};
 				GetMousePosition(MousePosition.X, MousePosition.Y);
 				MarqueeHUD->MarqueeReleased(MousePosition);
-
-
+				
 			}
 		}
 		
 	}
 	
 }
+
 
 void AJeninPlayerController::BeginPlay()
 {
@@ -82,7 +80,8 @@ void AJeninPlayerController::BeginPlay()
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	this->SetInputMode(InputMode);
+
+
+
+
 }
-
-
-	

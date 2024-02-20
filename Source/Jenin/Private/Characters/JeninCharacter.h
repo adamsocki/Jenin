@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "EnhancedInputSubsystemInterface.h"
+
+#include "Core/JeninGameState.h"
 #include "Camera/CameraComponent.h"
+#include "Core/JeninPlayerState.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "JeninCharacter.generated.h"
@@ -13,6 +16,11 @@ UCLASS()
 class JENIN_API AJeninCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	AJeninGameState* JeninGameState ;
+	AJeninPlayerState* JeninPlayerState ;
+
 
 public:
 	// Sets default values for this character's properties
@@ -42,6 +50,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> MouseLeftClickAction = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	TSubclassOf<AActor> ResidentBPClass;
+
+	
 	
 	void MoveTriggered(const FInputActionValue& Value);	
 	void RotateTriggered(const FInputActionValue& Value);
@@ -72,9 +84,7 @@ public:
 	float FireRate;
 	bool IsFiringWeapon = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
-	TSubclassOf<AActor> ResidentBPClass;
-
+	
 	float DragTolerance = 10.0f;
 	bool IsMarqueeSelecting;
 
@@ -83,6 +93,7 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	
 
 public:
 	virtual void Tick(float DeltaTime) override;

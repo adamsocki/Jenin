@@ -11,4 +11,11 @@ UCLASS()
 class JENIN_API AJeninGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+
+	
+public:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game | Dev Settings")
+	bool DevelopmentMode;
 };
