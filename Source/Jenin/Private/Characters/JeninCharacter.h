@@ -51,9 +51,10 @@ public:
 	TObjectPtr<UInputAction> MouseLeftClickAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
-	TSubclassOf<AActor> ResidentBPClass;
+	TSubclassOf<APawn> ResidentBPClass;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
+	TSubclassOf<APawn> BuildingBPClass;
 	
 	void MoveTriggered(const FInputActionValue& Value);	
 	void RotateTriggered(const FInputActionValue& Value);
@@ -66,12 +67,14 @@ public:
 	void SpawnTriggered(const FInputActionValue& Value);
 	void SpawnCompleted(const FInputActionValue& Value);
 	
-	
 	UFUNCTION(Server, Unreliable)
 	void Server_MoveForward(float ForwardMovementFloat);
 
 	UFUNCTION(Server, Reliable)
-	void SpawnResident();
+	void SpawnResident(FVector SpawnLocation);
+	
+	UFUNCTION(Server, Reliable)
+	void SpawnBuilding(int32 ResidentSpawnCount);
 
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void StopSpawn();
@@ -90,6 +93,9 @@ public:
 
 	/** A timer handle used for providing the fire rate delay in-between spawns.*/
 	FTimerHandle FiringTimer;
+
+	bool TryToSpawnAtLocation(const FVector& Location);
+	void SpawnActorsAroundPerimeter(const FVector& SpawnLocation, float TargetRadius);
 	
 protected:
 	virtual void BeginPlay() override;

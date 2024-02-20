@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "JeninPlayerController.h"
+#include "Actors/JeninBuilding.h"
 #include "Actors/JeninResidentActor.h"
 #include "Core/JeninGameState.h"
 #include "GameFramework/GameSession.h"
@@ -29,10 +30,16 @@ AJeninCharacter::AJeninCharacter()
 	FireRate = 0.25f;
 	IsFiringWeapon = false;
 
-	static ConstructorHelpers::FClassFinder<AActor> BPFinder(TEXT("Blueprint'/Game/App/Actors/BP_JeninResidentActor.BP_JeninResidentActor_C'"));
+	static ConstructorHelpers::FClassFinder<APawn> BPFinder(TEXT("Blueprint'/Game/App/Actors/BP_JeninResidentActor.BP_JeninResidentActor_C'"));
 	if (BPFinder.Class != nullptr)
 	{
 		ResidentBPClass = BPFinder.Class; 
+	}
+
+	static ConstructorHelpers::FClassFinder<APawn> BPFinder2(TEXT("Blueprint'/Game/App/Actors/BP_JeninBuildingActor.BP_JeninBuildingActor_C'"));
+	if (BPFinder2.Class != nullptr)
+	{
+		BuildingBPClass = BPFinder2.Class; 
 	}
 
 }
@@ -57,30 +64,17 @@ void AJeninCharacter::BeginPlay()
 		}
 	}
 
-	
-	AActor* owner = GetOwner();
-	
-	if(owner)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *owner->GetName());
-		
-		//Create Default Unit & Building Setup
-		FVector spawnLocation = owner->GetActorLocation() + ( owner->GetActorRotation().Vector()  * 100.0f ) + (owner->GetActorUpVector() * 50.0f);
-		FRotator spawnRotation = owner->GetActorRotation();
-		
-		FActorSpawnParameters spawnParameters;
-		spawnParameters.Instigator = GetInstigator();
-		spawnParameters.Owner = this;
-		
-		//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
 
+	if (JeninGameState->InDev)
+	{
 		
 		if (ResidentBPClass && JeninGameState->InDev)
 		{
-			SpawnResident();
+			SpawnBuilding(4);
 		}
-		
 	}
+	
+	
 }
 
 
@@ -162,7 +156,7 @@ void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 		IsSpawning = true;
 		UWorld* World = GetWorld();
 		World->GetTimerManager().SetTimer(FiringTimer, this, &AJeninCharacter::StopSpawn, FireRate, false);
-		SpawnResident();
+		SpawnResident(GetActorLocation());
 	}
 	//CanSpawn = false;
             
@@ -174,6 +168,8 @@ void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 	//CanSpawn = false;
 }
 
+
+
 void AJeninCharacter::StopSpawn()
 {
 	IsSpawning = false;
@@ -184,7 +180,7 @@ void AJeninCharacter::SpawnCompleted(const FInputActionValue& Value)
 	//CanSpawn = true; 
 }
 
-void AJeninCharacter::SpawnResident_Implementation()
+void AJeninCharacter::SpawnBuilding_Implementation(int32 ResidentSpawnCount)
 {
 	FVector spawnLocation = GetActorLocation() + ( GetActorRotation().Vector()  * 100.0f ) + (GetActorUpVector() * 50.0f);
 	FRotator spawnRotation = GetActorRotation();
@@ -195,9 +191,37 @@ void AJeninCharacter::SpawnResident_Implementation()
 	
 	//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
 
+	if (BuildingBPClass)
+	{
+		AJeninBuilding* SpawnedBuilding = GetWorld()->SpawnActor<AJeninBuilding>(BuildingBPClass, spawnLocation, spawnRotation);
+		//JeninPlayerState->Units.Add(SpawnedActor);
+
+		if (SpawnedBuilding) 
+		{
+			SpawnedBuilding->SetOwner(this);
+			for (int i =0; i < ResidentSpawnCount; i++)
+			{
+				
+				SpawnResident(GetActorLocation());
+			}
+		}
+	}
+}
+
+void AJeninCharacter::SpawnResident_Implementation(FVector SpawnLocation)
+{
+	//FVector spawnLocation = GetActorLocation() + ( GetActorRotation().Vector()  * 100.0f ) + (GetActorUpVector() * 50.0f);
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
+	
+	//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
+
 	if (ResidentBPClass)
 	{
-		AJeninResidentActor* SpawnedActor = GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, spawnLocation, spawnRotation);
+		AJeninResidentActor* SpawnedActor = GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, SpawnLocation, SpawnRotation);
 		//JeninPlayerState->Units.Add(SpawnedActor);
 
 		if (SpawnedActor) 
@@ -205,10 +229,43 @@ void AJeninCharacter::SpawnResident_Implementation()
 			SpawnedActor->SetOwner(this); 
 		}
 	}
-
-	
-	
 }
+
+bool TryToSpawnAtLocation(const FVector& Location) 
+{
+	// Perform collision check at Location 
+	// .....
+    
+	if (true) 
+	{
+		// Spawn the actor at Location
+		return true; 
+	}
+	return false; 
+}
+
+
+void SpawnActorsAroundPerimeter(const FVector& SpawnLocation, float TargetRadius)
+{
+	const int NumActorsToSpawn = 4;
+	const float AngleIncrement = 360.0f / NumActorsToSpawn;
+
+	for (int i = 0; i < NumActorsToSpawn; ++i)
+	{
+		float Angle = i * AngleIncrement;
+		FVector PerimeterPoint = SpawnLocation + (FVector::ForwardVector * TargetRadius).RotateAngleAxis(Angle, FVector::UpVector);
+
+		if (TryToSpawnAtLocation(PerimeterPoint)) 
+		{
+			// Spawn successful!
+		}
+		else
+		{
+			// (Implement iterative search: Option A or B)
+		}
+	}
+}
+
 
 
 void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -228,7 +285,6 @@ void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		
 		EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Triggered, this, &AJeninCharacter::SpawnTriggered);
 		//EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Completed, this, &AJeninCharacter::SpawnCompleted);
-
 		//EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MouseLeftClickTriggered)
 	}
 }

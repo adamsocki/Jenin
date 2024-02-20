@@ -10,8 +10,11 @@ AJeninResidentActor::AJeninResidentActor()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CapsuleCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleCollider"));
+	RootComponent = CapsuleCollider;
+	
 	ResidentStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ResidentMeshComponent"));
-	ResidentStaticMesh->SetupAttachment(RootComponent);
+	ResidentStaticMesh->SetupAttachment(CapsuleCollider);
 
 	// Load the Static Mesh Asset
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe_180.Shape_Pipe_180'"));
@@ -23,6 +26,9 @@ AJeninResidentActor::AJeninResidentActor()
 	{
 		// Optional: Handle the case where the mesh was not found
 	}
+
+	//MovementComponent = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("MovementComponent")); 
+ 
 	bReplicates = true;
 	IsSelected = false;
 	Tags.AddUnique(FName("Selectable"));  

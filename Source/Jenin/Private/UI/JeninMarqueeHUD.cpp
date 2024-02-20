@@ -57,7 +57,12 @@ void AJeninMarqueeHUD::DrawHUD()
 				case ROLE_Authority: RoleString = "Authority"; break;
 				}
 
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Actor Role: %s"), *RoleString)); 
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Actor Role: %s"), *RoleString));
+				AActor* OwnerActor = ActorsInRectangle[i]->GetOwner();
+				if (OwnerActor)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, OwnerActor->GetName());
+				}
 				if (ActorsInRectangle[i]->ActorHasTag(FName("Selectable")) && ActorsInRectangle[i]->IsOwnedBy(GetOwner()))
 				{
 					AActor * Resident = ActorsInRectangle[i];

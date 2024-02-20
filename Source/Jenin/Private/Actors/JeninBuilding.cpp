@@ -10,17 +10,18 @@ AJeninBuilding::AJeninBuilding()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
+	RootComponent = BoxCollider;
+
 	BuildingStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ResidentMeshComponent"));
-	BuildingStaticMesh->SetupAttachment(RootComponent);
+	BuildingStaticMesh->SetupAttachment(BoxCollider);
 
 	// Load the Static Mesh Asset
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe_180.Shape_Pipe_180'"));
 	if (MeshAsset.Succeeded())
 	{
 		BuildingStaticMesh->SetStaticMesh(MeshAsset.Object);
-	}
-
-	
+	} 
 	
 	bReplicates = true;
 	IsSelected = false;
