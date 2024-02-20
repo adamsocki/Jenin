@@ -53,9 +53,17 @@ void AJeninGameMode::PostLogin(APlayerController* NewPlayer)
 	AJeninCharacter* chara = Cast<AJeninCharacter>(NewPlayer->GetCharacter());
 	if (chara)
 	{
-		chara->SetActorLocation(SpawnLocations[playerCount]);
+		chara->PlayerInit(SpawnLocations[playerCount]);
 		playerCount++;
+		
 	}
 	
 		
+}
+
+void AJeninGameMode::PlayerInit(APlayerController* NewPlayer)
+{
+	
+	
+
 }

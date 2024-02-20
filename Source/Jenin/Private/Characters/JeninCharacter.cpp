@@ -63,16 +63,7 @@ void AJeninCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputContext,0);
 		}
 	}
-
-
-	if (JeninGameState->InDev)
-	{
-		
-		if (ResidentBPClass && JeninGameState->InDev)
-		{
-			SpawnBuilding(4);
-		}
-	}
+	
 	
 	
 }
@@ -194,15 +185,30 @@ void AJeninCharacter::SpawnBuilding_Implementation(int32 ResidentSpawnCount)
 	if (BuildingBPClass)
 	{
 		AJeninBuilding* SpawnedBuilding = GetWorld()->SpawnActor<AJeninBuilding>(BuildingBPClass, spawnLocation, spawnRotation);
-		//JeninPlayerState->Units.Add(SpawnedActor);
+		//JeninPlayerState->Units.Add(SpawnedActor)						
 
 		if (SpawnedBuilding) 
 		{
 			SpawnedBuilding->SetOwner(this);
+
+			// After Spawn, set bottom of building to ground
+			FHitResult HitResult = {};
+			FVector StartLocation = SpawnedBuilding->GetActorLocation();
+			FVector EndLocation = StartLocation + FVector(0,0,-1000);
+
+			// @TODO: Check to see if Can Spawn at location Such as if it overlaps something.
+			
+			GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_WorldStatic);
+			if (HitResult.GetActor()->ActorHasTag("Ground") && HitResult.bBlockingHit)
+			{
+				FVector GroundLocation = HitResult.Location;
+				GroundLocation.Z += 5.0f;
+				SpawnedBuilding->SetActorLocation(GroundLocation);
+			}
+			
 			for (int i =0; i < ResidentSpawnCount; i++)
 			{
-				
-				SpawnResident(GetActorLocation());
+				SpawnResident(SpawnedBuilding->GetActorLocation()); 
 			}
 		}
 	}
@@ -213,59 +219,51 @@ void AJeninCharacter::SpawnResident_Implementation(FVector SpawnLocation)
 	//FVector spawnLocation = GetActorLocation() + ( GetActorRotation().Vector()  * 100.0f ) + (GetActorUpVector() * 50.0f);
 	FRotator SpawnRotation = GetActorRotation();
 
+	FVector SpawnCenter = SpawnLocation;
+	float SpawnRadius = 600.0f;
+
+	FVector RandomOffset = FVector::ZeroVector;
+	bool bFoundValidSpawn = false;
+	int32 MaxAttempts = 10;
+
+	for (int i = 0; i < MaxAttempts; i++)
+	{
+		// @TODO: Create logic to attempt spawn 
+		// @TODO: Create logic to use size of init building for spawn minimum
+		// @TODO: Create logic to set a min and max radius for spawn location
+
+		//if (!GetWorld()->OverLapAnyTestByChannel(PotentialSpawnLocation, FQuat::Identity, ECC_WorldStatic, FCollisionShape::Ha)
+		
+	}
+
+	RandomOffset.X = FMath::RandPointInCircle(SpawnRadius).X;
+	RandomOffset.Y = FMath::RandPointInCircle(SpawnRadius).Y;
+	SpawnLocation = SpawnCenter + RandomOffset;
+
+	
+	
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;
+
 	
 	//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
 
 	if (ResidentBPClass)
 	{
-		AJeninResidentActor* SpawnedActor = GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, SpawnLocation, SpawnRotation);
+		AJeninResidentActor* SpawnedResident = GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, SpawnLocation, SpawnRotation);
 		//JeninPlayerState->Units.Add(SpawnedActor);
 
-		if (SpawnedActor) 
+		
+
+		if (SpawnedResident) 
 		{
-			SpawnedActor->SetOwner(this); 
+			SpawnedResident->SetOwner(this);
+
+			UE_LOG(LogTemp, Warning, TEXT("Hello"));
 		}
 	}
 }
-
-bool TryToSpawnAtLocation(const FVector& Location) 
-{
-	// Perform collision check at Location 
-	// .....
-    
-	if (true) 
-	{
-		// Spawn the actor at Location
-		return true; 
-	}
-	return false; 
-}
-
-
-void SpawnActorsAroundPerimeter(const FVector& SpawnLocation, float TargetRadius)
-{
-	const int NumActorsToSpawn = 4;
-	const float AngleIncrement = 360.0f / NumActorsToSpawn;
-
-	for (int i = 0; i < NumActorsToSpawn; ++i)
-	{
-		float Angle = i * AngleIncrement;
-		FVector PerimeterPoint = SpawnLocation + (FVector::ForwardVector * TargetRadius).RotateAngleAxis(Angle, FVector::UpVector);
-
-		if (TryToSpawnAtLocation(PerimeterPoint)) 
-		{
-			// Spawn successful!
-		}
-		else
-		{
-			// (Implement iterative search: Option A or B)
-		}
-	}
-}
-
 
 
 void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -287,6 +285,21 @@ void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		//EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Completed, this, &AJeninCharacter::SpawnCompleted);
 		//EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MouseLeftClickTriggered)
 	}
+}
+
+void AJeninCharacter::PlayerInit(const FVector PlayerSpawnLocation)
+{
+	
+	SetActorLocation(PlayerSpawnLocation);
+	UE_LOG(LogTemp, Warning, TEXT("Hello"));
+
+	if (JeninGameState->InDev)
+	{
+		SpawnBuilding(4);
+
+		
+	}
+	
 }
 
 void AJeninCharacter::MoveTriggered(const FInputActionValue& Value)

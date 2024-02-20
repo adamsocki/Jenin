@@ -38,6 +38,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<FVector> SpawnLocations;
+
+	void PlayerInit(APlayerController* NewPlayer);
 };
 
 

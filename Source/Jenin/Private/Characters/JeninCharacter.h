@@ -94,8 +94,6 @@ public:
 	/** A timer handle used for providing the fire rate delay in-between spawns.*/
 	FTimerHandle FiringTimer;
 
-	bool TryToSpawnAtLocation(const FVector& Location);
-	void SpawnActorsAroundPerimeter(const FVector& SpawnLocation, float TargetRadius);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -106,4 +104,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void PlayerInit(FVector PlayerSpawnLocation);
+
 };
