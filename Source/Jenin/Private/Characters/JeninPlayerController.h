@@ -28,10 +28,42 @@ public:
 	bool IsMouseHeld;
 	bool IsMouseReleased;
 
+	/** MappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> ZoomAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> RotateAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> SetResidentDestinationClickAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> MouseLeftClickAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> CameraMoveAction = nullptr;
+	
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
+	void OnInputStarted();
+	void OnSetDestinationTriggered();
+	void OnSetDestinationReleased();
+	
+	void OnMouseLeftClickStarted(const FInputActionValue& Value);
+	void OnMouseLeftClickTriggered(const FInputActionValue& Value);
+	void OnMouseLeftClickCompleted(const FInputActionValue& Value);
+	
+	void OnSetResidentDestinationTriggered(const FInputActionValue& Value);
 
+	void OnCameraMoveTriggered(const FInputActionValue& Value);	
+	void OnZoomTriggered(const FInputActionValue& Value);
+	void OnRotateTriggered(const FInputActionValue& Value);
+	
 
 };

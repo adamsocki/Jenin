@@ -39,16 +39,7 @@ public:
 	TObjectPtr<UInputAction> MoveAction = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> RotateAction = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> ZoomAction = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> SpawnAction = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> MouseLeftClickAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
 	TSubclassOf<APawn> ResidentBPClass;
@@ -57,18 +48,9 @@ public:
 	TSubclassOf<APawn> BuildingBPClass;
 	
 	void MoveTriggered(const FInputActionValue& Value);	
-	void RotateTriggered(const FInputActionValue& Value);
-	void ZoomTriggered(const FInputActionValue& Value);
-	
-	void MouseLeftClickTriggered(const FInputActionValue& Value);
-	void MouseLeftClickOngoing(const FInputActionValue& Value);
-	void MouseLeftClickCompleted(const FInputActionValue& Value);
 
 	void SpawnTriggered(const FInputActionValue& Value);
 	void SpawnCompleted(const FInputActionValue& Value);
-	
-	UFUNCTION(Server, Unreliable)
-	void Server_MoveForward(float ForwardMovementFloat);
 
 	UFUNCTION(Server, Reliable)
 	void SpawnResident(FVector SpawnLocation);
@@ -86,7 +68,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay")
 	float FireRate;
 	bool IsFiringWeapon = false;
-
 	
 	float DragTolerance = 10.0f;
 	bool IsMarqueeSelecting;
@@ -94,7 +75,6 @@ public:
 	/** A timer handle used for providing the fire rate delay in-between spawns.*/
 	FTimerHandle FiringTimer;
 
-	
 protected:
 	virtual void BeginPlay() override;
 	

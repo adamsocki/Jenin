@@ -45,7 +45,6 @@ AJeninCharacter::AJeninCharacter()
 }
 
 
-
 void AJeninCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -54,7 +53,6 @@ void AJeninCharacter::BeginPlay()
 
 	JeninGameState = Cast<AJeninGameState>(GetWorld()->GetGameState());
 	JeninPlayerState = Cast<AJeninPlayerState>(GetPlayerState());
-
 	
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -63,11 +61,7 @@ void AJeninCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputContext,0);
 		}
 	}
-	
-	
-	
 }
-
 
 void AJeninCharacter::Tick(float DeltaTime)
 {
@@ -79,67 +73,9 @@ void AJeninCharacter::Tick(float DeltaTime)
 	// @TODO: Fix movement so that isn't as fast if both forward and lateral are pressed simultaneously 
 	// @TODO: Set server vs listen-server movement 
 
-void AJeninCharacter::RotateTriggered(const FInputActionValue& Value)
-{
-	const FVector2D RotationVector = Value.Get<FVector2D>();
-	if (Controller != nullptr)
-	{
-		const float TurnAmount = RotationVector.X * 3.0f;
-		AddControllerYawInput(TurnAmount);
-	}
-}
-
-void AJeninCharacter::ZoomTriggered(const FInputActionValue& Value)
-{
-	const float ZoomFloat = Value.Get<float>();
-	if (Controller != nullptr && CameraBoom != nullptr)
-	{
-		float NewArmLength = CameraBoom->TargetArmLength + (ZoomFloat * -40.0f);
-		NewArmLength = FMath::Clamp(NewArmLength, 100.0f, 10000.0f); 
-
-		CameraBoom->TargetArmLength = NewArmLength;
-	}
-}
-
-void AJeninCharacter::MouseLeftClickTriggered(const FInputActionValue& Value)
-{
-	if (AJeninPlayerController* PlayerController = Cast<AJeninPlayerController>(Controller))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hello"));
-		PlayerController->IsMouseTriggered = true;
-	}
-}
-
-void AJeninCharacter::MouseLeftClickOngoing(const FInputActionValue& Value)
-{
-	if (AJeninPlayerController* PlayerController = Cast<AJeninPlayerController>(Controller))
-	{
-		PlayerController->IsMouseTriggered = false;
-		PlayerController->IsMouseHeld = true;
-
-
-		
-	}
-}
-
-void AJeninCharacter::MouseLeftClickCompleted(const FInputActionValue& Value)
-{
-	if (AJeninPlayerController* PlayerController = Cast<AJeninPlayerController>(Controller))
-	{
-		//PlayerController->IsMouseTriggered = false;
-		//PlayerController->IsMouseHeld = false;
-
-		PlayerController->IsMouseReleased = true;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("Released"));
-}
 
 void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 {
-	//AJeninGameState* CurrentGameState = GetWorld()->GetGameState<AJeninGameState>();
-	//AJeninResidentActor* NewActor = GetWorld()->SpawnActor<AJeninResidentActor>(AJeninResidentActor::StaticClass()); // Default spawn parameters
-
-	//FTransform SpawnTransform = {};
 
 	FireRate = 1.0f;
 	if (!IsSpawning)
@@ -149,17 +85,7 @@ void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 		World->GetTimerManager().SetTimer(FiringTimer, this, &AJeninCharacter::StopSpawn, FireRate, false);
 		SpawnResident(GetActorLocation());
 	}
-	//CanSpawn = false;
-            
-	//FVector SpawnLocation = {};
-	//SpawnLocation = this->GetActorLocation();
-	//SpawnLocation.Z += 130.0f;
-	//SpawnTransform.SetLocation(SpawnLocation);
-	//CurrentGameState->Server_SpawnActor_Implementation(NewActor, SpawnTransform);
-	//CanSpawn = false;
 }
-
-
 
 void AJeninCharacter::StopSpawn()
 {
@@ -233,14 +159,11 @@ void AJeninCharacter::SpawnResident_Implementation(FVector SpawnLocation)
 		// @TODO: Create logic to set a min and max radius for spawn location
 
 		//if (!GetWorld()->OverLapAnyTestByChannel(PotentialSpawnLocation, FQuat::Identity, ECC_WorldStatic, FCollisionShape::Ha)
-		
 	}
 
 	RandomOffset.X = FMath::RandPointInCircle(SpawnRadius).X;
 	RandomOffset.Y = FMath::RandPointInCircle(SpawnRadius).Y;
 	SpawnLocation = SpawnCenter + RandomOffset;
-
-	
 	
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
@@ -274,16 +197,8 @@ void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	{
 		EnhancedInputComponent->BindAction(this->MoveAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MoveTriggered);
 		//EnhancedInputComponent->BindAction(this->MoveLateralAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MoveLateralTriggered);
-		EnhancedInputComponent->BindAction(this->RotateAction, ETriggerEvent::Triggered, this, &AJeninCharacter::RotateTriggered);
-		EnhancedInputComponent->BindAction(this->ZoomAction, ETriggerEvent::Triggered, this, &AJeninCharacter::ZoomTriggered);
-
-		EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Started, this, &AJeninCharacter::MouseLeftClickTriggered);
-		EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Ongoing, this, &AJeninCharacter::MouseLeftClickOngoing);
-		EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Completed, this, &AJeninCharacter::MouseLeftClickCompleted);
 		
 		EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Triggered, this, &AJeninCharacter::SpawnTriggered);
-		//EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Completed, this, &AJeninCharacter::SpawnCompleted);
-		//EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MouseLeftClickTriggered)
 	}
 }
 
@@ -296,7 +211,6 @@ void AJeninCharacter::PlayerInit(const FVector PlayerSpawnLocation)
 	if (JeninGameState->InDev)
 	{
 		SpawnBuilding(4);
-
 		
 	}
 	
@@ -316,11 +230,6 @@ void AJeninCharacter::MoveTriggered(const FInputActionValue& Value)
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
-}
-
-void AJeninCharacter::Server_MoveForward_Implementation(float ForwardMovementFloat)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Hello"));
 }
 
 

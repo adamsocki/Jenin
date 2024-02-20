@@ -30,7 +30,9 @@ void AJeninMarqueeHUD::DrawHUD()
 	if (IsDrawing)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("IsDrawing = TRUE"));
-		FColor c = FColor(10, 10, 200, 128);  
+		FColor c = FColor(10, 10, 200, 128);
+		UE_LOG(LogTemp, Warning, TEXT("HUD DRAWMouse Location: %s"), *StartMousePosition.ToString());
+
 		UE_LOG(LogTemp, Warning, TEXT("DrawRect - Color: %s,\n Start Pos: (%f2, %f2), \nCur Pos: (%f, %f),\nWidth: %f, Height: %f"), 
 			  *c.ToString(), 
 			  StartMousePosition.X, StartMousePosition.Y, CurrentMousePosition.X, CurrentMousePosition.Y,
@@ -112,11 +114,15 @@ void AJeninMarqueeHUD::MarqueePressed(const FVector2D startMousePosition)
 {
 	StartMousePosition = startMousePosition;
 	IsDrawing = true;
+	UE_LOG(LogTemp, Warning, TEXT("HUDMouse Location: %s"), *StartMousePosition.ToString());
+
 }
 
 void AJeninMarqueeHUD::MarqueeHeld(const FVector2D currentMousePosition)
 {
 	CurrentMousePosition = currentMousePosition;
+	UE_LOG(LogTemp, Warning, TEXT("HeldHUD"));
+
 }
 
 void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
