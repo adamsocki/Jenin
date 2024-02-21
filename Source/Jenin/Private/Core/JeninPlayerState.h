@@ -24,7 +24,9 @@ protected:
 public:
 	bool InPlay;
 	bool ResidentMovementMode;
+	
 	TArray<AActor*> Buildings;
 	TArray<AJeninResidentActor*> Units;
-	
+
+	TArray<AJeninResidentActor*> SelectedUnits;
 };

@@ -32,7 +32,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void DrawHUD() override;
 	
-	void MarqueePressed(FVector2D startMousePosition);
+	void MarqueeStarted(FVector2D startMousePosition);
 	void MarqueeHeld(FVector2D currentMousePosition);
 	void MarqueeReleased(const FVector2D releasedMousePosition);
 

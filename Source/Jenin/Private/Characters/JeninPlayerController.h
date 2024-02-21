@@ -59,7 +59,7 @@ protected:
 	void OnMouseLeftClickTriggered(const FInputActionValue& Value);
 	void OnMouseLeftClickCompleted(const FInputActionValue& Value);
 	
-	void OnSetResidentDestinationTriggered(const FInputActionValue& Value);
+	void OnSetResidentDestinationStarted(const FInputActionValue& Value);
 
 	void OnCameraMoveTriggered(const FInputActionValue& Value);	
 	void OnZoomTriggered(const FInputActionValue& Value);

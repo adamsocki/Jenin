@@ -52,7 +52,7 @@ void AJeninPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Triggered, this, &AJeninPlayerController::OnMouseLeftClickTriggered);
 		EnhancedInputComponent->BindAction(this->MouseLeftClickAction, ETriggerEvent::Completed, this, &AJeninPlayerController::OnMouseLeftClickCompleted);
 		
-		EnhancedInputComponent->BindAction(this->SetResidentDestinationClickAction, ETriggerEvent::Triggered, this, &AJeninPlayerController::OnSetResidentDestinationTriggered);
+		EnhancedInputComponent->BindAction(this->SetResidentDestinationClickAction, ETriggerEvent::Started, this, &AJeninPlayerController::OnSetResidentDestinationStarted);
 		}
 	else
 	{
@@ -61,18 +61,12 @@ void AJeninPlayerController::SetupInputComponent()
 }
 void AJeninPlayerController::OnMouseLeftClickStarted(const FInputActionValue& Value)
 {
-	
 	AJeninMarqueeHUD* MarqueeHUD = GetHUD<AJeninMarqueeHUD>();
 	if (MarqueeHUD)
 	{
 		FVector2D MousePosition = {};
-
 		GetMousePosition(MousePosition.X, MousePosition.Y);
-		UE_LOG(LogTemp, Warning, TEXT("ControllerMouse Location: %s"), *MousePosition.ToString());
-
-		MarqueeHUD->MarqueePressed(MousePosition);
-		UE_LOG(LogTemp, Warning, TEXT("Start"));
-
+		MarqueeHUD->MarqueeStarted(MousePosition);
 	}
 }
 void AJeninPlayerController::OnMouseLeftClickTriggered(const FInputActionValue& Value)
@@ -95,7 +89,7 @@ void AJeninPlayerController::OnMouseLeftClickCompleted(const FInputActionValue& 
 		MarqueeHUD->MarqueeReleased(MousePosition);
 	}
 }
-void AJeninPlayerController::OnSetResidentDestinationTriggered(const FInputActionValue& Value)
+void AJeninPlayerController::OnSetResidentDestinationStarted(const FInputActionValue& Value)
 {
 	if(AJeninPlayerState* JeninPlayerState = GetPlayerState<AJeninPlayerState>())
 	{

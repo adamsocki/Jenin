@@ -195,9 +195,6 @@ void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(this->MoveAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MoveTriggered);
-		//EnhancedInputComponent->BindAction(this->MoveLateralAction, ETriggerEvent::Triggered, this, &AJeninCharacter::MoveLateralTriggered);
-		
 		EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Triggered, this, &AJeninCharacter::SpawnTriggered);
 	}
 }
@@ -215,21 +212,4 @@ void AJeninCharacter::PlayerInit(const FVector PlayerSpawnLocation)
 	}
 	
 }
-
-void AJeninCharacter::MoveTriggered(const FInputActionValue& Value)
-{
-	const FVector2D MovementVector = Value.Get<FVector2D>();
-	if (Controller != nullptr)
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
-}
-
 

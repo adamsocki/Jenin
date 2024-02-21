@@ -9,6 +9,8 @@ AJeninPlayerState::AJeninPlayerState()
 	Buildings = {};
 	InPlay = true;
 	ResidentMovementMode = false;
+
+	
 }
 
 void AJeninPlayerState::BeginPlay()

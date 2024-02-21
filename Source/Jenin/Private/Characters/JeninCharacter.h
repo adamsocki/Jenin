@@ -34,9 +34,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> InputContext = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> MoveAction = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> SpawnAction = nullptr;
@@ -47,8 +44,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resident")
 	TSubclassOf<APawn> BuildingBPClass;
 	
-	void MoveTriggered(const FInputActionValue& Value);	
-
 	void SpawnTriggered(const FInputActionValue& Value);
 	void SpawnCompleted(const FInputActionValue& Value);
 
