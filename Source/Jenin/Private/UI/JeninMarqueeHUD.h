@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Actors/JeninResidentActor.h"
+#include "Core/JeninPlayerState.h"
 #include "GameFramework/HUD.h"
 #include "JeninMarqueeHUD.generated.h"
 
@@ -28,6 +29,7 @@ public:
 	bool IsDrawing;
 
 	APlayerController* PlayerController;
+	AJeninPlayerState* JeninPlayerState;
 
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void DrawHUD() override;

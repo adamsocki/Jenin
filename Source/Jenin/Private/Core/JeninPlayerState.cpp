@@ -10,6 +10,7 @@ AJeninPlayerState::AJeninPlayerState()
 	InPlay = true;
 	ResidentMovementMode = false;
 
+	SelectedUnits = {};
 	
 }
 

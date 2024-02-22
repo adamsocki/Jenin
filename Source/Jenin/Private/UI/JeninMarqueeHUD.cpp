@@ -24,6 +24,8 @@ void AJeninMarqueeHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerController = GetOwningPlayerController();
+
+	JeninPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
 }
 
 void AJeninMarqueeHUD::DrawHUD()
@@ -48,7 +50,6 @@ void AJeninMarqueeHUD::DrawHUD()
 		{
 			for (int i = 0; i < ActorsInRectangle.Num(); i++)
 			{
-			
 				
 				if (ActorsInRectangle[i]->ActorHasTag(FName("Selectable")) && ActorsInRectangle[i]->IsOwnedBy(GetOwner()))
 				{
@@ -60,6 +61,7 @@ void AJeninMarqueeHUD::DrawHUD()
 						{
 							DecalComponent->SetVisibility(true);
 							SelectedActors.Add(ActorsInRectangle[i]);
+							
 						}
 					}
 				}
@@ -76,6 +78,7 @@ void AJeninMarqueeHUD::DrawHUD()
 					{
 						DecalComponent->SetVisibility(false);
 						SelectedActors.RemoveAt(i);
+						
 					}
 					//
 				}
@@ -85,6 +88,9 @@ void AJeninMarqueeHUD::DrawHUD()
 			UE_LOG(LogTemp, Warning, TEXT("The Selected value is: %d"), SelectedActors.Num());
 			UE_LOG(LogTemp, Warning, TEXT("The ActorinRec value is: %d"), ActorsInRectangle.Num());
 
+
+
+			
 			// if (SelectedActors.Num() > 0 )
 			// {
 			// 	AJeninPlayerState* ClientPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
@@ -132,7 +138,26 @@ void AJeninMarqueeHUD::Tick(float DeltaSeconds)
 void AJeninMarqueeHUD::MarqueeStarted(const FVector2D startMousePosition)
 {
 
-	//APlayerController
+	
+	if (JeninPlayerState)
+	{
+		for (int i = 0; i < JeninPlayerState->SelectedUnits.Num(); i++)
+		{
+
+			AActor * Resident = JeninPlayerState->SelectedUnits[i];
+			UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
+			if (DecalComponent)
+			{
+				DecalComponent->SetVisibility(false);
+			}
+
+			
+		}
+		JeninPlayerState->SelectedUnits.Empty();
+
+	}
+	
+	
 	StartMousePosition = startMousePosition;
 	IsDrawing = true;
 	UE_LOG(LogTemp, Warning, TEXT("HUDMouse Location: %s"), *StartMousePosition.ToString());
@@ -181,7 +206,10 @@ void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 	
 	
 	UE_LOG(LogTemp, Warning, TEXT("The Selected Release PreEmptyvalue is: %d"), SelectedActors.Num());
-
+	for (int i = 0; i < SelectedActors.Num(); i++)
+	{
+		JeninPlayerState->SelectedUnits.Add(Cast<AJeninResidentActor>(SelectedActors[i]));
+	}
 	SelectedActors.Empty();
 	UE_LOG(LogTemp, Warning, TEXT("The Selected Release PostEmptyvalue is: %d"), SelectedActors.Num());
 
