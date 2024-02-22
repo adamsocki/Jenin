@@ -8,6 +8,7 @@
 
 
 #include "Components/DecalComponent.h"
+#include "Core/JeninPlayerState.h"
 
 AJeninMarqueeHUD::AJeninMarqueeHUD()
 {
@@ -23,14 +24,19 @@ void AJeninMarqueeHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerController = GetOwningPlayerController();
+
+	JeninPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
 }
 
 void AJeninMarqueeHUD::DrawHUD()
 {
+	Super::DrawHUD();
 	if (IsDrawing)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("IsDrawing = TRUE"));
-		FColor c = FColor(10, 10, 200, 128);  
+		FColor c = FColor(10, 10, 200, 128);
+		UE_LOG(LogTemp, Warning, TEXT("HUD DRAWMouse Location: %s"), *StartMousePosition.ToString());
+
 		UE_LOG(LogTemp, Warning, TEXT("DrawRect - Color: %s,\n Start Pos: (%f2, %f2), \nCur Pos: (%f, %f),\nWidth: %f, Height: %f"), 
 			  *c.ToString(), 
 			  StartMousePosition.X, StartMousePosition.Y, CurrentMousePosition.X, CurrentMousePosition.Y,
@@ -44,45 +50,67 @@ void AJeninMarqueeHUD::DrawHUD()
 		{
 			for (int i = 0; i < ActorsInRectangle.Num(); i++)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Selected Actor: %s"), *ActorsInRectangle[i]->GetName());
 				
-				ENetRole MyRole = ActorsInRectangle[i]->GetLocalRole();
-
-				FString RoleString;
-				switch(MyRole)
-				{
-				case ROLE_None: RoleString = "None"; break;
-				case ROLE_SimulatedProxy: RoleString = "Simulated Proxy"; break;
-				case ROLE_AutonomousProxy: RoleString = "Autonomous Proxy"; break;
-				case ROLE_Authority: RoleString = "Authority"; break;
-				}
-
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Actor Role: %s"), *RoleString)); 
 				if (ActorsInRectangle[i]->ActorHasTag(FName("Selectable")) && ActorsInRectangle[i]->IsOwnedBy(GetOwner()))
 				{
-					AActor * Resident = ActorsInRectangle[i];
-					UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
-
-					SelectedActors.Add(ActorsInRectangle[i]);
-					if (DecalComponent)
+					if (SelectedActors.Find(ActorsInRectangle[i]) == INDEX_NONE)
 					{
-						DecalComponent->SetVisibility(true); 
+						AActor * Resident = ActorsInRectangle[i];
+						UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
+						if (DecalComponent)
+						{
+							DecalComponent->SetVisibility(true);
+							SelectedActors.Add(ActorsInRectangle[i]);
+							
+						}
 					}
 				}
 			}
 			
 			for (int i = 0; i < SelectedActors.Num(); i++)
 			{
+				AActor *a = SelectedActors[i];
 				if(ActorsInRectangle.Find(SelectedActors[i]) == INDEX_NONE)
 				{
 					AActor * Resident = SelectedActors[i];
 					UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
 					if (DecalComponent)
 					{
-						DecalComponent->SetVisibility(false); 
+						DecalComponent->SetVisibility(false);
+						SelectedActors.RemoveAt(i);
+						
 					}
+					//
 				}
+				//else
+				
 			}
+			UE_LOG(LogTemp, Warning, TEXT("The Selected value is: %d"), SelectedActors.Num());
+			UE_LOG(LogTemp, Warning, TEXT("The ActorinRec value is: %d"), ActorsInRectangle.Num());
+
+
+
+			
+			// if (SelectedActors.Num() > 0 )
+			// {
+			// 	AJeninPlayerState* ClientPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
+			// 	if (ClientPlayerState)
+			// 	{
+			// 		ClientPlayerState->ResidentMovementMode = true;
+			// 		//for (int i )
+			// 		//ClientPlayerState->SelectedUnits
+			// 	}
+			//
+			// 	
+			// }
+			// else
+			// {
+			// 	AJeninPlayerState* ClientPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
+			// 	if (ClientPlayerState)
+			// 	{
+			// 		ClientPlayerState->ResidentMovementMode = false;
+			// 	}
+			// }
 		}
 	}
 	else
@@ -92,6 +120,8 @@ void AJeninMarqueeHUD::DrawHUD()
 			//SelectedActors[i].selec
 		}
 	}
+
+	//if (ActorsInRectangle)
 }
 
 void AJeninMarqueeHUD::Tick(float DeltaSeconds)
@@ -101,17 +131,45 @@ void AJeninMarqueeHUD::Tick(float DeltaSeconds)
 
 	ActorsInRectangle.Empty();
 	//SelectedActors.Empty();
+	//SelectedActors.Empty();
+
 }
 
-void AJeninMarqueeHUD::MarqueePressed(const FVector2D startMousePosition)
+void AJeninMarqueeHUD::MarqueeStarted(const FVector2D startMousePosition)
 {
+
+	
+	if (JeninPlayerState)
+	{
+		for (int i = 0; i < JeninPlayerState->SelectedUnits.Num(); i++)
+		{
+
+			AActor * Resident = JeninPlayerState->SelectedUnits[i];
+			UDecalComponent* DecalComponent  = Resident->GetComponentByClass<UDecalComponent>();
+			if (DecalComponent)
+			{
+				DecalComponent->SetVisibility(false);
+			}
+
+			
+		}
+		JeninPlayerState->SelectedUnits.Empty();
+
+	}
+	
+	
 	StartMousePosition = startMousePosition;
 	IsDrawing = true;
+	UE_LOG(LogTemp, Warning, TEXT("HUDMouse Location: %s"), *StartMousePosition.ToString());
+
 }
 
 void AJeninMarqueeHUD::MarqueeHeld(const FVector2D currentMousePosition)
 {
 	CurrentMousePosition = currentMousePosition;
+	UE_LOG(LogTemp, Warning, TEXT("HeldHUD"));
+	
+
 }
 
 void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
@@ -137,6 +195,24 @@ void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 		}
 		UE_LOG(LogTemp, Warning, TEXT("MarqueeReleased"));
 	}
+	else
+	{
+		for (int i = 0; i < SelectedActors.Num(); i++)
+		{
+			
+		}
+	}
+
+	
+	
+	UE_LOG(LogTemp, Warning, TEXT("The Selected Release PreEmptyvalue is: %d"), SelectedActors.Num());
+	for (int i = 0; i < SelectedActors.Num(); i++)
+	{
+		JeninPlayerState->SelectedUnits.Add(Cast<AJeninResidentActor>(SelectedActors[i]));
+	}
+	SelectedActors.Empty();
+	UE_LOG(LogTemp, Warning, TEXT("The Selected Release PostEmptyvalue is: %d"), SelectedActors.Num());
+
 }
 
 

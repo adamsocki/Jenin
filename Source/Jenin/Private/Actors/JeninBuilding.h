@@ -3,17 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "JeninBuilding.generated.h"
 
 UCLASS()
-class JENIN_API AJeninBuilding : public AActor
+class JENIN_API AJeninBuilding : public APawn
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> BuildingStaticMesh = nullptr;
 
+	UPROPERTY(VisibleAnywhere) 
+	UBoxComponent* BoxCollider;
 
 public:
 	// Sets default values for this actor's properties
