@@ -14,42 +14,20 @@ AJeninGameMode::AJeninGameMode()
 
 void AJeninGameMode::BeginPlay()
 {
-	
 	Super::BeginPlay();
 
-
-	
-
-	
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
 		AllPlayerControllers.Add(Iterator->Get());
 		
 	}
 
-	for (APlayerController* Controller : AllPlayerControllers)
-	{
-		// set location
-		
-	}
-	
-
-
-	
-}
-
-void AJeninGameMode::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	
 }
 
 void AJeninGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	  
-	
+
 	AJeninCharacter* chara = Cast<AJeninCharacter>(NewPlayer->GetCharacter());
 	if (chara)
 	{
@@ -57,13 +35,6 @@ void AJeninGameMode::PostLogin(APlayerController* NewPlayer)
 		playerCount++;
 		
 	}
-	
-		
-}
-
-void AJeninGameMode::PlayerInit(APlayerController* NewPlayer)
-{
-	
-	
 
 }
+

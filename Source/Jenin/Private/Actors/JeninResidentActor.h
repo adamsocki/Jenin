@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "JeninResidentActor.generated.h"
 
@@ -19,6 +19,8 @@ class JENIN_API AJeninResidentActor : public APawn
 	UPROPERTY(VisibleAnywhere) 
 	UCapsuleComponent* CapsuleCollider;
 
+	
+
 	//UPROPERTY(EditAnywhere)
 	//UCharacterMovementComponent* MovementComponent;
 	
@@ -27,8 +29,14 @@ public:
 	AJeninResidentActor();
 
 	bool IsSelected;
+	UFUNCTION(Server, Reliable)
+	void Server_MoveToDestination(FVector TransitDestination, float dTime);
 
-	
+
+	bool MoveResident;
+	FVector MoveDestination;
+	void MoveToDestination(FVector CachedDestination);
+	void MoveTo(FVector loc);
 
 protected:
 	// Called when the game starts or when spawned

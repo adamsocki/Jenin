@@ -45,7 +45,6 @@ public:
 	TSubclassOf<APawn> BuildingBPClass;
 	
 	void SpawnTriggered(const FInputActionValue& Value);
-	void SpawnCompleted(const FInputActionValue& Value);
 
 	UFUNCTION(Server, Reliable)
 	void SpawnResident(FVector SpawnLocation);
@@ -75,7 +74,6 @@ protected:
 	
 
 public:
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

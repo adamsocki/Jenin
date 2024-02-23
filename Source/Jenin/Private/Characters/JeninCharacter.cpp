@@ -44,13 +44,9 @@ AJeninCharacter::AJeninCharacter()
 
 }
 
-
 void AJeninCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//GetPlayerState()
-
 	JeninGameState = Cast<AJeninGameState>(GetWorld()->GetGameState());
 	JeninPlayerState = Cast<AJeninPlayerState>(GetPlayerState());
 	
@@ -63,16 +59,10 @@ void AJeninCharacter::BeginPlay()
 	}
 }
 
-void AJeninCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 	// @TODO: Fix movement so that it starts off slower and speeds up
 	// @TODO: Fix movement so that it Ends faster then speeds down
 	// @TODO: Fix movement so that isn't as fast if both forward and lateral are pressed simultaneously 
 	// @TODO: Set server vs listen-server movement 
-
 
 void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 {
@@ -86,17 +76,10 @@ void AJeninCharacter::SpawnTriggered(const FInputActionValue& Value)
 		SpawnResident(GetActorLocation());
 	}
 }
-
 void AJeninCharacter::StopSpawn()
 {
 	IsSpawning = false;
 }
-
-void AJeninCharacter::SpawnCompleted(const FInputActionValue& Value)
-{
-	//CanSpawn = true; 
-}
-
 void AJeninCharacter::SpawnBuilding_Implementation(int32 ResidentSpawnCount)
 {
 	FVector spawnLocation = GetActorLocation() + ( GetActorRotation().Vector()  * 100.0f ) + (GetActorUpVector() * 50.0f);
@@ -139,7 +122,6 @@ void AJeninCharacter::SpawnBuilding_Implementation(int32 ResidentSpawnCount)
 		}
 	}
 }
-
 void AJeninCharacter::SpawnResident_Implementation(FVector SpawnLocation)
 {
 	//FVector spawnLocation = GetActorLocation() + ( GetActorRotation().Vector()  * 100.0f ) + (GetActorUpVector() * 50.0f);
@@ -148,8 +130,8 @@ void AJeninCharacter::SpawnResident_Implementation(FVector SpawnLocation)
 	FVector SpawnCenter = SpawnLocation;
 	float SpawnRadius = 600.0f;
 
-	FVector RandomOffset = FVector::ZeroVector;
-	bool bFoundValidSpawn = false;
+	FVector RandomOffset;
+	//bool FoundValidSpawn = false;
 	int32 MaxAttempts = 10;
 
 	for (int i = 0; i < MaxAttempts; i++)
@@ -163,32 +145,24 @@ void AJeninCharacter::SpawnResident_Implementation(FVector SpawnLocation)
 
 	RandomOffset.X = FMath::RandPointInCircle(SpawnRadius).X;
 	RandomOffset.Y = FMath::RandPointInCircle(SpawnRadius).Y;
+	RandomOffset.Z = 250.0f;
 	SpawnLocation = SpawnCenter + RandomOffset;
 	
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;
 
-	
-	//AJeninResidentActor* spawnedProjectile = GetWorld()->SpawnActor<AJeninResidentActor>(spawnLocation, spawnRotation, spawnParameters);
-
 	if (ResidentBPClass)
 	{
 		AJeninResidentActor* SpawnedResident = GetWorld()->SpawnActor<AJeninResidentActor>(ResidentBPClass, SpawnLocation, SpawnRotation);
-		//JeninPlayerState->Units.Add(SpawnedActor);
-
-		
 
 		if (SpawnedResident) 
 		{
+			//jps->Units.Add(SpawnedResident);
 			SpawnedResident->SetOwner(this);
-
-			UE_LOG(LogTemp, Warning, TEXT("Hello"));
 		}
 	}
 }
-
-
 void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -201,15 +175,9 @@ void AJeninCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void AJeninCharacter::PlayerInit(const FVector PlayerSpawnLocation)
 {
-	
 	SetActorLocation(PlayerSpawnLocation);
-	UE_LOG(LogTemp, Warning, TEXT("Hello"));
-
 	if (JeninGameState->InDev)
 	{
 		SpawnBuilding(4);
-		
 	}
-	
 }
-

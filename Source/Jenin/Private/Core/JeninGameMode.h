@@ -21,25 +21,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game | Dev Settings")
 	bool DevelopmentMode;
 
-
-	
 	virtual void BeginPlay() override;
 
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-	virtual void Tick(float DeltaSeconds) override;
-
-
-	void PostLogin(APlayerController* NewPlayer) override;
-
+	UPROPERTY()
 	TArray<APlayerController*> AllPlayerControllers;
-
-	
 	int32 playerCount;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FVector> SpawnLocations;
-
-	void PlayerInit(APlayerController* NewPlayer);
 };
 
 

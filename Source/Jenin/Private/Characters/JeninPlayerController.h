@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystemInterface.h"
 #include "EnhancedInputSubsystems.h"
+#include "Core/JeninPlayerState.h"
 
 
 #include "JeninPlayerController.generated.h"
@@ -28,6 +29,8 @@ public:
 	bool IsMouseHeld;
 	bool IsMouseReleased;
 
+	AJeninPlayerState* JeninPlayerState;
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
@@ -37,7 +40,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> RotateAction = nullptr;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> SpawnAction = nullptr;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> SetResidentDestinationClickAction;
 
@@ -47,14 +53,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> CameraMoveAction = nullptr;
 	
+private:
+	FVector CachedDestination;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-	void OnInputStarted();
-	void OnSetDestinationTriggered();
-	void OnSetDestinationReleased();
 	
+	void OnSpawnStarted();
+
 	void OnMouseLeftClickStarted(const FInputActionValue& Value);
 	void OnMouseLeftClickTriggered(const FInputActionValue& Value);
 	void OnMouseLeftClickCompleted(const FInputActionValue& Value);
