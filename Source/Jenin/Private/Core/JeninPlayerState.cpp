@@ -11,10 +11,34 @@ AJeninPlayerState::AJeninPlayerState()
 	ResidentMovementMode = false;
 
 	SelectedUnits = {};
-	
+	PrimaryActorTick.bCanEverTick = true; 
 }
 
 void AJeninPlayerState::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
+	
 }
+
+void AJeninPlayerState::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	//UE_LOG(LogTemp, Warning, TEXT("The integer value is:"));
+
+	//UE_LOG(LogTemp, Warning, TEXT("The integer value is: %d"), SelectedUnits.Num());
+
+	if (SelectedUnits.Num() > 0)
+	{
+		//ResidentMovementMode = true;
+	}
+	else
+	{
+		//ResidentMovementMode = true;
+
+	}
+
+	
+}
+
+
+

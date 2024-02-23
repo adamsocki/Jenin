@@ -18,6 +18,8 @@ AJeninPlayerController::AJeninPlayerController()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
+	CachedDestination = FVector::ZeroVector;
+	
 }
 void AJeninPlayerController::Tick(float DeltaTime)
 {
@@ -32,6 +34,7 @@ void AJeninPlayerController::BeginPlay()
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	this->SetInputMode(InputMode);
+
 }
 void AJeninPlayerController::SetupInputComponent()
 {
@@ -40,10 +43,9 @@ void AJeninPlayerController::SetupInputComponent()
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		// Setup mouse input events
-		// EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &AJeninPlayerController::OnInputStarted);
-		// EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AJeninPlayerController::OnSetDestinationTriggered);
-		// EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AJeninPlayerController::OnSetDestinationReleased);
-		// EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AJeninPlayerController::OnSetDestinationReleased);
+		
+		EnhancedInputComponent->BindAction(this->SpawnAction, ETriggerEvent::Started, this, &AJeninPlayerController::OnSpawnStarted);
+
 		EnhancedInputComponent->BindAction(this->CameraMoveAction, ETriggerEvent::Triggered, this, &AJeninPlayerController::OnCameraMoveTriggered);
 		EnhancedInputComponent->BindAction(this->ZoomAction, ETriggerEvent::Triggered, this, &AJeninPlayerController::OnZoomTriggered);
 		EnhancedInputComponent->BindAction(this->RotateAction, ETriggerEvent::Triggered, this, &AJeninPlayerController::OnRotateTriggered);
@@ -59,6 +61,12 @@ void AJeninPlayerController::SetupInputComponent()
 	//	UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
+
+void AJeninPlayerController::OnSpawnStarted()
+{
+	
+}
+
 void AJeninPlayerController::OnMouseLeftClickStarted(const FInputActionValue& Value)
 {
 	AJeninMarqueeHUD* MarqueeHUD = GetHUD<AJeninMarqueeHUD>();
@@ -87,15 +95,48 @@ void AJeninPlayerController::OnMouseLeftClickCompleted(const FInputActionValue& 
 		FVector2D MousePosition = {};
 		GetMousePosition(MousePosition.X, MousePosition.Y);
 		MarqueeHUD->MarqueeReleased(MousePosition);
+		
 	}
 }
 void AJeninPlayerController::OnSetResidentDestinationStarted(const FInputActionValue& Value)
 {
-	if(AJeninPlayerState* JeninPlayerState = GetPlayerState<AJeninPlayerState>())
+	FHitResult Hit;
+	bool bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+
+	if(AJeninPlayerState* jps = GetPlayerState<AJeninPlayerState>())
 	{
-		if (JeninPlayerState->ResidentMovementMode)
+		UE_LOG(LogTemp, Warning, TEXT("Hello"));
+
+		if (true)
 		{
 			// @TODO: MOVE RESIDENT LOGIC
+			
+			//bool bHitSuccessful = false;
+
+			//bool bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+			if (bHitSuccessful)
+			{
+				CachedDestination = Hit.Location;
+				UE_LOG(LogTemp, Warning, TEXT("arstarstarst: %s"), *CachedDestination.ToString());
+				
+			}
+
+			if (jps)
+			{
+				// tell units to move in self (which will be server)
+				for (int i = 0; i < jps->SelectedUnits.Num(); i++)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("j"));
+
+					jps->SelectedUnits[i]->MoveResident = true;
+					jps->SelectedUnits[i]->MoveDestination = CachedDestination;
+					UE_LOG(LogTemp, Warning, TEXT("HUDMouse Location: %s"), *CachedDestination.ToString());
+
+					//jps->SelectedUnits[i]->Server_MoveToDestination(CachedDestination);
+					//FVector ForwardDirection = 
+					//jps->SelectedUnits[i]->AddMovementInput(CachedDestination);
+				}
+			}
 		}
 	}
 }
@@ -116,7 +157,6 @@ void AJeninPlayerController::OnCameraMoveTriggered(const FInputActionValue& Valu
 		ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
-
 void AJeninPlayerController::OnZoomTriggered(const FInputActionValue& Value)
 {
 	const float ZoomFloat = Value.Get<float>();

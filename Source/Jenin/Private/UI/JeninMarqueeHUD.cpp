@@ -137,8 +137,6 @@ void AJeninMarqueeHUD::Tick(float DeltaSeconds)
 
 void AJeninMarqueeHUD::MarqueeStarted(const FVector2D startMousePosition)
 {
-
-	
 	if (JeninPlayerState)
 	{
 		for (int i = 0; i < JeninPlayerState->SelectedUnits.Num(); i++)
@@ -150,8 +148,6 @@ void AJeninMarqueeHUD::MarqueeStarted(const FVector2D startMousePosition)
 			{
 				DecalComponent->SetVisibility(false);
 			}
-
-			
 		}
 		JeninPlayerState->SelectedUnits.Empty();
 
@@ -160,16 +156,13 @@ void AJeninMarqueeHUD::MarqueeStarted(const FVector2D startMousePosition)
 	
 	StartMousePosition = startMousePosition;
 	IsDrawing = true;
-	UE_LOG(LogTemp, Warning, TEXT("HUDMouse Location: %s"), *StartMousePosition.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("HUDMouse Location: %s"), *StartMousePosition.ToString());
 
 }
 
 void AJeninMarqueeHUD::MarqueeHeld(const FVector2D currentMousePosition)
 {
 	CurrentMousePosition = currentMousePosition;
-	UE_LOG(LogTemp, Warning, TEXT("HeldHUD"));
-	
-
 }
 
 void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
@@ -204,15 +197,21 @@ void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 	}
 
 	
-	
-	UE_LOG(LogTemp, Warning, TEXT("The Selected Release PreEmptyvalue is: %d"), SelectedActors.Num());
-	for (int i = 0; i < SelectedActors.Num(); i++)
+	if (AJeninPlayerState* jps = PlayerController->GetPlayerState<AJeninPlayerState>())
 	{
-		JeninPlayerState->SelectedUnits.Add(Cast<AJeninResidentActor>(SelectedActors[i]));
+		UE_LOG(LogTemp, Warning, TEXT("The Selected Release PreEmptyvalue is: %d"), SelectedActors.Num());
+		for (int i = 0; i < SelectedActors.Num(); i++)
+		{
+			AJeninResidentActor *c = Cast<AJeninResidentActor>(SelectedActors[i]);
+		
+			UE_LOG(LogTemp, Warning, TEXT("HUDMouse Location: %s"), *c->GetName());
+			
+			jps->SelectedUnits.Add(c);
+		}
+		SelectedActors.Empty();
+		UE_LOG(LogTemp, Warning, TEXT("The Selected Release PostEmptyvalue is: %d"), SelectedActors.Num());
 	}
-	SelectedActors.Empty();
-	UE_LOG(LogTemp, Warning, TEXT("The Selected Release PostEmptyvalue is: %d"), SelectedActors.Num());
-
+	
 }
 
 

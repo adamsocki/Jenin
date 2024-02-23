@@ -18,10 +18,6 @@ class JENIN_API AJeninGameState : public AGameStateBase
 	UFUNCTION(Server, Reliable)
 	void Server_CreateCharacter(ACharacter* NewCharacter);
 
-	
-	//UFUNCTION(Server, Reliable)
-	//void Server_SpawnActor_Implementation(AActor* NewActor, FTransform SpawnTransform);
-
 	int32 GenerateUniqueCharacterID();
 	int32 CharacterID_Values;
 
@@ -29,5 +25,4 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool InDev; 
 
-	
 };

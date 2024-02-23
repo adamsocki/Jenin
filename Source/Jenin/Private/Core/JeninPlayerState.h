@@ -28,5 +28,10 @@ public:
 	TArray<AActor*> Buildings;
 	TArray<AJeninResidentActor*> Units;
 
+	UPROPERTY()
 	TArray<AJeninResidentActor*> SelectedUnits;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	
 };
