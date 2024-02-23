@@ -41,6 +41,12 @@ public:
 	TArray<AActor*>  SelectedActors;
 	TArray<AActor*>  ActorsInRectangle;
 
+	void SwitchUIMode();
+
+	// SELECTION MODE FUNCTIONALITY
+	bool InSelectionMode;
+
+
 // DEBUG CODE //
 	bool DisAllowOnlySelectionOfOwnerUnits;
 

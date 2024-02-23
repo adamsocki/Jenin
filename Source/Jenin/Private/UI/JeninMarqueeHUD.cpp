@@ -130,8 +130,8 @@ void AJeninMarqueeHUD::Tick(float DeltaSeconds)
 	//ReceiveDrawHUD(StartMousePosition.X - CurrentMousePosition.X, StartMousePosition.Y - CurrentMousePosition.Y);
 
 	ActorsInRectangle.Empty();
-	//SelectedActors.Empty();
-	//SelectedActors.Empty();
+	
+
 
 }
 
@@ -214,5 +214,7 @@ void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 	
 }
 
+
+void AJeninMarquSwitchUIMode()
 
 

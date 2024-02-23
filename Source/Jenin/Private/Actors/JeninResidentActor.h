@@ -29,6 +29,7 @@ public:
 	AJeninResidentActor();
 
 	bool IsSelected;
+	
 	UFUNCTION(Server, Reliable)
 	void Server_MoveToDestination(FVector TransitDestination, float dTime);
 

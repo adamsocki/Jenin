@@ -50,6 +50,7 @@ AJeninResidentActor::AJeninResidentActor()
 	bReplicates = true;
 	IsSelected = false;
 	Tags.AddUnique(FName("Selectable"));
+	Tags.AddUnique(FName("Unit"));
 	MoveResident = false;
 	MoveDestination = {};
 }

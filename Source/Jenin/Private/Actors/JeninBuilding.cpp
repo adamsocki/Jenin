@@ -27,9 +27,8 @@ AJeninBuilding::AJeninBuilding()
 	IsSelected = false;
 
 	Tags.AddUnique(FName("Selectable"));  
-
-
-	
+	Tags.AddUnique(FName("Building"));
+		
 }
 
 // Called when the game starts or when spawned
