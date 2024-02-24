@@ -41,6 +41,7 @@ public:
 	TArray<AActor*>  SelectedActors;
 	TArray<AActor*>  ActorsInRectangle;
 
+	//UFUNCTION()
 	void SwitchUIMode();
 
 	// SELECTION MODE FUNCTIONALITY

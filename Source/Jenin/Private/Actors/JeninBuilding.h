@@ -21,17 +21,14 @@ class JENIN_API AJeninBuilding : public APawn
 public:
 	// Sets default values for this actor's properties
 	AJeninBuilding();
-
 	
 	bool IsSelected;
-	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
-
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building")
 	float BuildingHealth;
@@ -41,4 +38,6 @@ public:
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	
 };

@@ -19,10 +19,12 @@ class JENIN_API AJeninResidentActor : public APawn
 	UPROPERTY(VisibleAnywhere) 
 	UCapsuleComponent* CapsuleCollider;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UTexture2D> UnitImage = nullptr;
+
 
 	//UPROPERTY(EditAnywhere)
-	//UCharacterMovementComponent* MovementComponent;
+	//UCharacterMovementCoponent* MovementComponent;
 	
 public:
 	// Sets default values for this actor's properties
@@ -32,8 +34,7 @@ public:
 	
 	UFUNCTION(Server, Reliable)
 	void Server_MoveToDestination(FVector TransitDestination, float dTime);
-
-
+	
 	bool MoveResident;
 	FVector MoveDestination;
 	void MoveToDestination(FVector CachedDestination);
@@ -46,4 +47,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	
+	
 };

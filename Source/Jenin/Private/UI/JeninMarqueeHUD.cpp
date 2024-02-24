@@ -195,7 +195,6 @@ void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 			
 		}
 	}
-
 	
 	if (AJeninPlayerState* jps = PlayerController->GetPlayerState<AJeninPlayerState>())
 	{
@@ -215,6 +214,8 @@ void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 }
 
 
-void AJeninMarquSwitchUIMode()
-
+void AJeninMarqueeHUD::SwitchUIMode()
+{
+	
+}
 
