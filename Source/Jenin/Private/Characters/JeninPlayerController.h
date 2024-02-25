@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystemInterface.h"
 #include "EnhancedInputSubsystems.h"
 #include "Core/JeninPlayerState.h"
+#include "UI/JeninUnitAreaWidget.h"
 
 
 #include "JeninPlayerController.generated.h"
@@ -52,7 +53,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> CameraMoveAction = nullptr;
-	
+
+
 private:
 	FVector CachedDestination;
 

@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "UI/IUnitSelectable.h"
+#include "JeninUnitAreaWidget.h"
 #include "Actors/JeninResidentActor.h"
 #include "Core/JeninPlayerState.h"
 #include "GameFramework/HUD.h"
@@ -12,20 +15,29 @@
  * 
  */
 UCLASS()
-class JENIN_API AJeninMarqueeHUD : public AHUD
+class JENIN_API AJeninMarqueeHUD : public AHUD, public IIUnitSelectable
 {
 	GENERATED_BODY()
 
+	
 	AJeninMarqueeHUD();
-
+	
+	
 	
 protected:
 	virtual void BeginPlay() override;
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UJeninUnitAreaWidget> UnitAreaWidget;
 
 public:
 	FVector2D StartMousePosition;
 	FVector2D CurrentMousePosition;
 
+
+	virtual void OnUnitSelected(UJeninUnitWidget* UnitWidget) override;
+	virtual void OnUnitDeselected(UJeninUnitWidget* UnitWidget) override;
+	
 	bool IsDrawing;
 
 	APlayerController* PlayerController;
@@ -40,17 +52,20 @@ public:
 
 	TArray<AActor*>  SelectedActors;
 	TArray<AActor*>  ActorsInRectangle;
+	//TArray<AActor*>  ActorFor;
 
 	//UFUNCTION()
 	void SwitchUIMode();
 
 	// SELECTION MODE FUNCTIONALITY
 	bool InSelectionMode;
-
+	UPROPERTY()
+	UJeninUnitAreaWidget* MyUnitAreaWidget;	
+	//void AddSelectedToUnitAreaWidget(UWidget* WidgetToAdd);
+	
 
 // DEBUG CODE //
 	bool DisAllowOnlySelectionOfOwnerUnits;
-
 
 	
 };

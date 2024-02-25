@@ -2,6 +2,9 @@
 
 #include "JeninResidentActor.h"
 
+#include "Blueprint/UserWidget.h"
+#include "UI/JeninMarqueeHUD.h"
+
 
 void AJeninResidentActor::Server_MoveToDestination_Implementation(FVector destination, float DeltaTime)
 {
@@ -21,6 +24,24 @@ void AJeninResidentActor::Server_MoveToDestination_Implementation(FVector destin
 }
 
 
+void AJeninResidentActor::OnSelected()
+{
+	AJeninMarqueeHUD* MarqueeHUD = Cast<AJeninMarqueeHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (MarqueeHUD)
+	{
+		
+		MarqueeHUD->OnUnitSelected(CreateWidget<UJeninUnitWidget>(GetWorld(), UnitWidget)); 
+	}
+}
+
+void AJeninResidentActor::OnDeselected()
+{
+	AJeninMarqueeHUD* MarqueeHUD = Cast<AJeninMarqueeHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (MarqueeHUD)
+	{
+		MarqueeHUD->OnUnitDeselected(MyUnitWidget); 
+	}
+}
 
 // Sets default values
 AJeninResidentActor::AJeninResidentActor()
@@ -44,15 +65,14 @@ AJeninResidentActor::AJeninResidentActor()
 	{
 		// Optional: Handle the case where the mesh was not found
 	}
-
-	//MovementComponent = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("MovementComponent")); 
- 
+	
 	bReplicates = true;
 	IsSelected = false;
 	Tags.AddUnique(FName("Selectable"));
 	Tags.AddUnique(FName("Unit"));
 	MoveResident = false;
 	MoveDestination = {};
+	
 }
 
 
@@ -71,26 +91,26 @@ void AJeninResidentActor::MoveToDestination(FVector transitDestination)
 void AJeninResidentActor::BeginPlay()
 {
 	Super::BeginPlay();
+	if (UnitWidget)
+	{
+		MyUnitWidget = CreateWidget<UJeninUnitWidget>(GetWorld(), UnitWidget);
+		MyUnitWidget->ActorReference = this;
+		//MyUnitWidget->UnitImageWidget
+		if (UnitImage)
+		{
+			MyUnitWidget->UnitImageWidget->SetBrushFromTexture(UnitImage);
 
-	
+		}
+	}
 }
 
 // Called every frame
 void AJeninResidentActor::Tick(float DeltaTime)
 {
-	
 	Super::Tick(DeltaTime);
+	
 	if (MoveResident)
-	{
-		// UE_LOG(LogTemp, Warning, TEXT("MoveResident"));
-		// UE_LOG(LogTemp, Warning, TEXT("move resident Location: %s"), *MoveDestination.ToString());
-		//
-		// FVector DesiredDirection = (MoveDestination - GetActorLocation()).GetSafeNormal();
-		//
-		// FVector NewVelocity = DesiredDirection * 100.0f;
-		//
-		// FVector NewPosition = GetActorLocation() + NewVelocity * DeltaTime;
-		// SetActorLocation(NewPosition);
+	{		
 		UE_LOG(LogTemp, Warning, TEXT("Tick resident Location: %s"), *MoveDestination.ToString());
 		Server_MoveToDestination(MoveDestination, DeltaTime);
 	}
@@ -102,5 +122,7 @@ void AJeninResidentActor::MoveTo(FVector loc)
 	this->SetActorLocation(loc);
 
 	//Server_MoveToDestination(loc);
-
 }
+
+
+

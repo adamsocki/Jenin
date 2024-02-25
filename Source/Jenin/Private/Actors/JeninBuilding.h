@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
+#include "UI/JeninUnitAreaWidget.h"
 #include "JeninBuilding.generated.h"
 
 UCLASS()

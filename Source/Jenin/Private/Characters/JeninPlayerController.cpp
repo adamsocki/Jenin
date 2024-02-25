@@ -35,6 +35,7 @@ void AJeninPlayerController::BeginPlay()
 	InputMode.SetHideCursorDuringCapture(false);
 	this->SetInputMode(InputMode);
 
+	
 }
 void AJeninPlayerController::SetupInputComponent()
 {

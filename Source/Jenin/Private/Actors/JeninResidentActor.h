@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Pawn.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "UI/IUnitSelectable.h"
+#include "UI/JeninUnitWidget.h"
+
 #include "JeninResidentActor.generated.h"
 
 UCLASS()
-class JENIN_API AJeninResidentActor : public APawn
+class JENIN_API AJeninResidentActor : public APawn, public IIUnitSelectable
 {
 	GENERATED_BODY()
 
@@ -20,11 +22,13 @@ class JENIN_API AJeninResidentActor : public APawn
 	UCapsuleComponent* CapsuleCollider;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UTexture2D> UnitImage = nullptr;
+	TObjectPtr<UTexture2D> UnitImage;
 
-
-	//UPROPERTY(EditAnywhere)
-	//UCharacterMovementCoponent* MovementComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> UnitWidget;
+	
+	virtual void OnSelected() override;
+	virtual void OnDeselected() override;
 	
 public:
 	// Sets default values for this actor's properties
@@ -40,6 +44,9 @@ public:
 	void MoveToDestination(FVector CachedDestination);
 	void MoveTo(FVector loc);
 
+	UPROPERTY()
+	UJeninUnitWidget* MyUnitWidget;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -47,7 +54,5 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	
 	
 };

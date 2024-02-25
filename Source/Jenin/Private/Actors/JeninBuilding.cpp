@@ -35,6 +35,9 @@ AJeninBuilding::AJeninBuilding()
 void AJeninBuilding::BeginPlay()
 {
 	Super::BeginPlay();
+
+
+	
 	
 }
 

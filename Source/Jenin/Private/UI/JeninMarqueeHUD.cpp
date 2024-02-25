@@ -8,6 +8,7 @@
 
 
 #include "Components/DecalComponent.h"
+#include "Components/HorizontalBox.h"
 #include "Core/JeninPlayerState.h"
 
 AJeninMarqueeHUD::AJeninMarqueeHUD()
@@ -20,12 +21,32 @@ AJeninMarqueeHUD::AJeninMarqueeHUD()
 	ActorsInRectangle = {};
 }
 
+
+
+void AJeninMarqueeHUD::OnUnitDeselected(UJeninUnitWidget* UnitWidget) 
+{
+	UnitWidget->RemoveFromParent();
+}
+
 void AJeninMarqueeHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerController = GetOwningPlayerController();
 
 	JeninPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
+
+	if (UnitAreaWidget)
+	{
+		MyUnitAreaWidget = CreateWidget<UJeninUnitAreaWidget>(GetWorld(), UnitAreaWidget);
+		MyUnitAreaWidget->AddToViewport();
+	}
+}
+
+void AJeninMarqueeHUD::OnUnitSelected(UJeninUnitWidget* UnitWidget) 
+{
+
+	MyUnitAreaWidget->HorizontalBoxWidget->AddChildToHorizontalBox(UnitWidget);
+	
 }
 
 void AJeninMarqueeHUD::DrawHUD()
@@ -61,6 +82,15 @@ void AJeninMarqueeHUD::DrawHUD()
 						{
 							DecalComponent->SetVisibility(true);
 							SelectedActors.Add(ActorsInRectangle[i]);
+							bool bIsImplemented = Resident->GetClass()->ImplementsInterface(UIUnitSelectable::StaticClass());
+							if (bIsImplemented)
+							{
+								IIUnitSelectable* TriggerInterface = Cast<IIUnitSelectable>(Resident);
+								if (TriggerInterface)  // Check if the cast was successful
+								{
+									TriggerInterface->OnSelected(); 
+								}
+							}
 							
 						}
 					}
@@ -78,7 +108,15 @@ void AJeninMarqueeHUD::DrawHUD()
 					{
 						DecalComponent->SetVisibility(false);
 						SelectedActors.RemoveAt(i);
-						
+						bool bIsImplemented = Resident->GetClass()->ImplementsInterface(UIUnitSelectable::StaticClass());
+						if (bIsImplemented)
+						{
+							IIUnitSelectable* TriggerInterface = Cast<IIUnitSelectable>(Resident);
+							if (TriggerInterface)  // Check if the cast was successful
+							{
+								TriggerInterface->OnDeselected(); 
+							}
+						}
 					}
 					//
 				}
@@ -87,30 +125,7 @@ void AJeninMarqueeHUD::DrawHUD()
 			}
 			UE_LOG(LogTemp, Warning, TEXT("The Selected value is: %d"), SelectedActors.Num());
 			UE_LOG(LogTemp, Warning, TEXT("The ActorinRec value is: %d"), ActorsInRectangle.Num());
-
-
-
 			
-			// if (SelectedActors.Num() > 0 )
-			// {
-			// 	AJeninPlayerState* ClientPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
-			// 	if (ClientPlayerState)
-			// 	{
-			// 		ClientPlayerState->ResidentMovementMode = true;
-			// 		//for (int i )
-			// 		//ClientPlayerState->SelectedUnits
-			// 	}
-			//
-			// 	
-			// }
-			// else
-			// {
-			// 	AJeninPlayerState* ClientPlayerState = PlayerController->GetPlayerState<AJeninPlayerState>();
-			// 	if (ClientPlayerState)
-			// 	{
-			// 		ClientPlayerState->ResidentMovementMode = false;
-			// 	}
-			// }
 		}
 	}
 	else
@@ -210,12 +225,17 @@ void AJeninMarqueeHUD::MarqueeReleased(const FVector2D releasedMousePosition)
 		SelectedActors.Empty();
 		UE_LOG(LogTemp, Warning, TEXT("The Selected Release PostEmptyvalue is: %d"), SelectedActors.Num());
 	}
-	
 }
-
 
 void AJeninMarqueeHUD::SwitchUIMode()
 {
 	
 }
 
+// void AJeninMarqueeHUD::OnUnitSelected(UUserWidget* UnitWidget)
+// {
+// 	if (MyUnitAreaWidget->HorizontalBoxWidget)
+// 	{
+// 		MyUnitAreaWidget->HorizontalBoxWidget->AddChildToHorizontalBox(UnitWidget);
+// 	}
+// }
