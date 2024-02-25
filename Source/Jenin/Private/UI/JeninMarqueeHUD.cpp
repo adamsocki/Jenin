@@ -23,10 +23,6 @@ AJeninMarqueeHUD::AJeninMarqueeHUD()
 
 
 
-void AJeninMarqueeHUD::OnUnitDeselected(UJeninUnitWidget* UnitWidget) 
-{
-	UnitWidget->RemoveFromParent();
-}
 
 void AJeninMarqueeHUD::BeginPlay()
 {
@@ -47,6 +43,12 @@ void AJeninMarqueeHUD::OnUnitSelected(UJeninUnitWidget* UnitWidget)
 
 	MyUnitAreaWidget->HorizontalBoxWidget->AddChildToHorizontalBox(UnitWidget);
 	
+	
+}
+void AJeninMarqueeHUD::OnUnitDeselected(UJeninUnitWidget* UnitWidget) 
+{
+	UnitWidget->RemoveFromParent();
+	//MyUnitAreaWidget->HorizontalBoxWidget->RemoveChild(UnitWidget);
 }
 
 void AJeninMarqueeHUD::DrawHUD()

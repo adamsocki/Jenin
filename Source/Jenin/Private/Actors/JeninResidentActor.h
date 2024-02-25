@@ -4,23 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "UI/IUnitSelectable.h"
 #include "UI/JeninUnitWidget.h"
 
 #include "JeninResidentActor.generated.h"
 
 UCLASS()
-class JENIN_API AJeninResidentActor : public APawn, public IIUnitSelectable
+class JENIN_API AJeninResidentActor : public ACharacter, public IIUnitSelectable
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UStaticMeshComponent> ResidentStaticMesh = nullptr;
-
-	UPROPERTY(VisibleAnywhere) 
-	UCapsuleComponent* CapsuleCollider;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UTexture2D> UnitImage;
 
@@ -50,6 +45,16 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character")
+	// UStaticMeshComponent* ResidentStaticMesh;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character") 
+	// UCapsuleComponent* CapsuleCollider;
+
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jenin|Character") 
+	// UDecalComponent* SelectionDecal;
+
 
 public:
 	// Called every frame

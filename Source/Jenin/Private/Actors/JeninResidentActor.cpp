@@ -3,6 +3,7 @@
 #include "JeninResidentActor.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Components/DecalComponent.h"
 #include "UI/JeninMarqueeHUD.h"
 
 
@@ -29,13 +30,15 @@ void AJeninResidentActor::OnSelected()
 	AJeninMarqueeHUD* MarqueeHUD = Cast<AJeninMarqueeHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	if (MarqueeHUD)
 	{
-		
-		MarqueeHUD->OnUnitSelected(CreateWidget<UJeninUnitWidget>(GetWorld(), UnitWidget)); 
+
+		MyUnitWidget = CreateWidget<UJeninUnitWidget>(GetWorld(), UnitWidget);
+		MarqueeHUD->OnUnitSelected(MyUnitWidget); 
 	}
 }
 
 void AJeninResidentActor::OnDeselected()
 {
+	// TODO @ MOVE ALL Selection logid to this interface logic
 	AJeninMarqueeHUD* MarqueeHUD = Cast<AJeninMarqueeHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	if (MarqueeHUD)
 	{
@@ -49,22 +52,26 @@ AJeninResidentActor::AJeninResidentActor()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CapsuleCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleCollider"));
-	RootComponent = CapsuleCollider;
-	
-	ResidentStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ResidentMeshComponent"));
-	ResidentStaticMesh->SetupAttachment(CapsuleCollider);
+	// CapsuleCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleCollider"));
+	// RootComponent = CapsuleCollider;
+	//
+	// // ResidentStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ResidentMeshComponent"));
+	// // ResidentStaticMesh->SetupAttachment(CapsuleCollider);
 
+
+	// SelectionDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("SelectionDecal"));
+	//
+	// SelectionDecal->SetupAttachment(RootComponent);
 	// Load the Static Mesh Asset
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe_180.Shape_Pipe_180'"));
-	if (MeshAsset.Succeeded())
-	{
-		ResidentStaticMesh->SetStaticMesh(MeshAsset.Object);
-	}
-	else
-	{
-		// Optional: Handle the case where the mesh was not found
-	}
+	// static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe_180.Shape_Pipe_180'"));
+	// if (MeshAsset.Succeeded())
+	// {
+	// 	ResidentStaticMesh->SetStaticMesh(MeshAsset.Object);
+	// }
+	// else
+	// {
+	// 	// Optional: Handle the case where the mesh was not found
+	// }
 	
 	bReplicates = true;
 	IsSelected = false;
