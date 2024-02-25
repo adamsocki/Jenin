@@ -88,7 +88,7 @@ void AJeninResidentActor::MoveToDestination(FVector transitDestination)
 
 	FVector WorldDirection = (transitDestination - GetActorLocation()).GetSafeNormal();
 	transitDestination.Z += 133.9f;
-	UE_LOG(LogTemp, Warning, TEXT("transitDestination Location: %s"), *transitDestination.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("transitDestination Location: %s"), *transitDestination.ToString());
 	this->SetActorLocation(transitDestination);
 	//this->AddMovementInput(WorldDirection, 1.0, false);
 	UE_LOG(LogTemp, Warning, TEXT("movkement"));
